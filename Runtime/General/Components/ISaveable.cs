@@ -2,12 +2,20 @@
 {
     using System;
 
-    public interface ISaveable
+    interface ISaveable
     {
-        
+        /// <summary>
+        /// Called on first load to create default save
+        /// </summary>
+        void PrepareInitial();
+
+        /// <summary>
+        /// Call after successful loading AND all configs are ready 
+        /// </summary>
+        void Start();
     }
     
-    public interface ISaveable<T> : ISaveable where T : SaveComponent
+    interface ISaveable<T> : ISaveable where T : SaveComponent
     {
         T Serialize();
 
