@@ -1,0 +1,18 @@
+{
+  "name": "unibrics.saves",
+  "displayName": "Unibrics Saves",
+  "version": "0.0.1-preview",
+  "unity": "2021.1",
+  "description": "Package Sample.",
+  "dependencies": {
+    "com.cysharp.unitask" : "2.2.4"
+  },
+  "keywords": [
+    "unibrics"
+  ],
+  "license": "Apache 2.0",
+  "author": {
+    "name": "Artem Korotenko",
+    "email": "korotenkofm@gmail.com"
+  }
+}

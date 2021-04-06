@@ -1,0 +1,16 @@
+{
+    "name": "Unibrics.Saves",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b3625dafe267886428923df2a463e029"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
