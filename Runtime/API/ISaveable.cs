@@ -1,4 +1,4 @@
-﻿namespace Unibrics.Saves.General
+﻿namespace Unibrics.Saves.API
 {
     using System;
 

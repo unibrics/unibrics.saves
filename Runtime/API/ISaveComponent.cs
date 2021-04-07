@@ -1,4 +1,4 @@
-namespace Unibrics.Saves.General
+namespace Unibrics.Saves.API
 {
     /// <summary>
     /// interface for partial saves such as DailyBonus, Tutorial, Wallet etc.

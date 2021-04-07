@@ -1,9 +1,14 @@
-﻿namespace Unibrics.Saves.General
+﻿namespace Unibrics.Saves
 {
     using System;
+    using API;
+    using Core.DI;
 
     public abstract class Saveable<T> : ISaveable<T> where T : SaveComponent, new()
     {
+        [Inject]
+        public ISaveScheduler SaveScheduler { get; set; }
+        
         public void PrepareInitial()
         {
             Deserialize(PrepareInitialSave(), DateTime.UtcNow);
@@ -15,7 +20,7 @@
         
         protected void ScheduleSave()
         {
-            //SaveScheduler.RequestSave();
+            SaveScheduler.RequestSave();
         }
 
         protected virtual T PrepareInitialSave()
