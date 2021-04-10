@@ -5,6 +5,13 @@ namespace Unibrics.Saves
 
     class SaveScheduler : ISaveScheduler, ITickable
     {
+        [Inject]
+        public ISaveProcessor SaveProcessor { get; set; }
+
+        [Inject]
+        public ISaveWriter Writer { get; set; }
+
+        
         private bool saveRequested;
         
         public void RequestSave()
@@ -31,7 +38,7 @@ namespace Unibrics.Saves
 
         private void PerformSave()
         {
-            
+            Writer.Write(SaveProcessor.GetSaveForCurrentState());
         }
     }
 }

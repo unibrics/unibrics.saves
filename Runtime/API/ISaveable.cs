@@ -15,7 +15,7 @@
         void Start();
     }
     
-    interface ISaveable<T> : ISaveable where T : SaveComponent
+    interface ISaveable<T> : ISaveable where T : ISaveComponent
     {
         T Serialize();
 

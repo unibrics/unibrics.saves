@@ -4,6 +4,7 @@
     using Core;
     using Core.DI;
     using Core.Services;
+    using Injector;
     using Tools;
 
     [Install]
@@ -21,6 +22,9 @@
             }
             
             services.AddSingleton<SaveScheduler>(typeof(ISaveScheduler), typeof(ITickable));
+            services.AddSingleton<ISaveProcessor, SaveProcessor>();
+            services.AddSingleton<ISaveInjector, SaveInjector>();
+            services.AddSingleton<ISaveWriter, SaveWriter>();
         }
     }
 }
