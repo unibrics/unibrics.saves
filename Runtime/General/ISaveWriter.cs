@@ -1,7 +1,9 @@
 namespace Unibrics.Saves
 {
+    using Core.DI;
+    using IoWorkers;
     using Model;
-    using UnityEngine;
+    using Pipeline;
 
     interface ISaveWriter
     {
@@ -10,9 +12,15 @@ namespace Unibrics.Saves
 
     internal class SaveWriter : ISaveWriter
     {
-        public void Write(SaveModel saveData)
+        [Inject]
+        public ISavePipeline SavePipeline { get; set; }
+
+        [Inject]
+        public ISaveIoWorker IoWorker { get; set; }
+        
+        public async void Write(SaveModel saveData)
         {
-            Debug.Log(string.Join(",", saveData.Components));
+            await IoWorker.Write(SavePipeline.ConvertToBytes(saveData));
         }
     }
 }

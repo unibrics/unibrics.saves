@@ -2,6 +2,7 @@ namespace Unibrics.Saves.Pipeline
 {
     using System;
     using System.Linq;
+    using System.Text;
     using Exceptions;
     using Model;
 
@@ -16,9 +17,22 @@ namespace Unibrics.Saves.Pipeline
     {
         private readonly ISavePipelineStage[] stages;
 
-        public SavePipeline(ISavePipelineStage[] stages)
+        private byte[] header;
+
+        private string id;
+
+        public SavePipeline(string id, ISavePipelineStage[] stages)
         {
+            this.id = id;
             this.stages = stages;
+            var idBytes = Encoding.UTF8.GetBytes(id);
+
+            //header is keyword CA FE AB BA -id length (int) - id - payload
+            header = new byte[] {0xCA, 0xFE, 0xAB, 0xBA}
+                .Union(BitConverter.GetBytes(idBytes.Length))
+                .Union(idBytes)
+                .ToArray();
+
             if (stages.Length < 1)
             {
                 throw new BrokenSavePipelineException("Can not create pipeline with no stages");
@@ -53,14 +67,13 @@ namespace Unibrics.Saves.Pipeline
                 result = stages[i].ProcessOutStream(result);
             }
 
-            //type check is performed during initialization
-            return (byte[]) result;
+            var bytes = (byte[]) result;
         }
 
         public SaveModel ConvertFromBytes(byte[] raw)
         {
             object result = raw;
-            
+
             //in stream bytes are processed in reversed order
             for (var i = stages.Length - 1; i >= 0; i--)
             {

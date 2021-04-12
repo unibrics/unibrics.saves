@@ -7,7 +7,7 @@ namespace Unibrics.Saves.Pipeline
     using Newtonsoft.Json.Converters;
     using Newtonsoft.Json.Linq;
 
-    [SavePipelineStage("serialize.json.text")]
+    [SavePipelineStage("serialize.jobject")]
     class JsonNetPipelineStage : SavePipelineStage<SaveModel, JObject>
     {
         private JsonSerializer serializer;

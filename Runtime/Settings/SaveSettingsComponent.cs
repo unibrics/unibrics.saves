@@ -4,8 +4,15 @@ namespace Unibrics.Saves.Settings
     using Core.Config;
 
     [InstallWithId("saves")]
-    public class SaveSettingsComponent : IAppSettingsComponent
+    class SaveSettingsSection : IAppSettingsSection
     {
-        public string[] Pipeline { get; set; }
+        public SavePipelineSettings Pipeline { get; set; }
     }
+
+    class SavePipelineSettings
+    {
+        public string Id { get; set; }
+        
+        public string[] Stages { get; set; }
+    } 
 }

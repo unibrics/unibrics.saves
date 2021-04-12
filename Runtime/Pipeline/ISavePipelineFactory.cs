@@ -5,11 +5,12 @@ namespace Unibrics.Saves.Pipeline
     using System.Linq;
     using Core;
     using Exceptions;
+    using Settings;
     using Tools;
 
     interface ISavePipelineFactory
     {
-        ISavePipeline CreatePipeline(List<string> stageIds);
+        ISavePipeline CreatePipeline(SavePipelineSettings settings);
     }
 
     class SavePipelineFactory : ISavePipelineFactory
@@ -23,10 +24,11 @@ namespace Unibrics.Saves.Pipeline
                 .ToDictionary(tuple => tuple.attribute.Id, tuple => tuple.type);
         }
 
-        public ISavePipeline CreatePipeline(List<string> stageIds)
+        public ISavePipeline CreatePipeline(SavePipelineSettings settings)
         {
-            var stages = new ISavePipelineStage[stageIds.Count];
-            for (var i = 0; i < stageIds.Count; i++)
+            var stageIds = settings.Stages;
+            var stages = new ISavePipelineStage[stageIds.Length];
+            for (var i = 0; i < stageIds.Length; i++)
             {
                 var id = stageIds[i];
                 if (!availableStageTypes.ContainsKey(id))
@@ -37,7 +39,7 @@ namespace Unibrics.Saves.Pipeline
                 stages[i] = (ISavePipelineStage) Activator.CreateInstance(availableStageTypes[id]);
             }
 
-            return new SavePipeline(stages);
+            return new SavePipeline(settings.Id, stages);
         }
     }
 }

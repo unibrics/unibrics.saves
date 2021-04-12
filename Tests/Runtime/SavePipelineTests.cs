@@ -10,10 +10,12 @@ namespace Unibrics.Saves.Tests
     [TestFixture]
     public class SavePipelineTests
     {
+        private const string Id = "id";
+        
         [Test]
         public void _01WhenEmptyPipeline_ShouldThrow()
         {
-            Assert.Throws<BrokenSavePipelineException>(() => new SavePipeline(new ISavePipelineStage[0]));
+            Assert.Throws<BrokenSavePipelineException>(() => new SavePipeline(Id, new ISavePipelineStage[0]));
         }
 
         [Test]
@@ -21,7 +23,7 @@ namespace Unibrics.Saves.Tests
         {
             var incorrectStage = Substitute.For<ISavePipelineInboundStage<string>>();
 
-            Assert.Throws<BrokenSavePipelineException>(() => new SavePipeline(new[] {incorrectStage}));
+            Assert.Throws<BrokenSavePipelineException>(() => new SavePipeline(Id, new[] {incorrectStage}));
         }
 
         [Test]
@@ -31,7 +33,7 @@ namespace Unibrics.Saves.Tests
             var incorrectStage = Substitute.For<ISavePipelineInboundStage<string>>();
 
             Assert.Throws<BrokenSavePipelineException>(() =>
-                new SavePipeline(new ISavePipelineStage[] {firstStage, incorrectStage}));
+                new SavePipeline(Id, new ISavePipelineStage[] {firstStage, incorrectStage}));
         }
         
         [Test]
@@ -42,8 +44,8 @@ namespace Unibrics.Saves.Tests
             
             var incorrectStage = new StubPipelineStage<int, byte[]>();
 
-            Assert.Throws<BrokenSavePipelineException>(() => new SavePipeline(new ISavePipelineStage[] {firstStage, incorrectStage}));
-            Assert.DoesNotThrow(() => new SavePipeline(new ISavePipelineStage[] {firstStage, secondStage}));
+            Assert.Throws<BrokenSavePipelineException>(() => new SavePipeline(Id, new ISavePipelineStage[] {firstStage, incorrectStage}));
+            Assert.DoesNotThrow(() => new SavePipeline(Id, new ISavePipelineStage[] {firstStage, secondStage}));
         }
         
         class StubPipelineStage<TIn, TOut> : SavePipelineStage<TIn, TOut>

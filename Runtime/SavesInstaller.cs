@@ -5,6 +5,8 @@
     using Core.DI;
     using Core.Services;
     using Injector;
+    using IoWorkers;
+    using Pipeline;
     using Settings;
     using Tools;
 
@@ -20,10 +22,16 @@
             services.AddSingleton<ISaveProcessor, SaveProcessor>();
             services.AddSingleton<ISaveInjector, SaveInjector>();
             services.AddSingleton<ISaveWriter, SaveWriter>();
+            services.AddSingleton<ISaveIoWorker, LocalSaveWorker>();
 
             void PreparePipeline()
             {
-                var settings = AppSettings.Get<SaveSettingsComponent>();
+                var settings = AppSettings.Get<SaveSettingsSection>();
+                var factory = new SavePipelineFactory();
+                services.AddSingleton<ISavePipelineFactory>(factory);
+                
+                var defaultPipeline = factory.CreatePipeline(settings.Pipeline);
+                services.AddSingleton<ISavePipeline>(defaultPipeline);
             }
             
             void BindSaveables()
