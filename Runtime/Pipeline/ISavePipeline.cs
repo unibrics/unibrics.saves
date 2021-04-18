@@ -17,21 +17,13 @@ namespace Unibrics.Saves.Pipeline
     {
         private readonly ISavePipelineStage[] stages;
 
-        private byte[] header;
-
-        private string id;
+        private readonly SaveBinaryHeader header;
 
         public SavePipeline(string id, ISavePipelineStage[] stages)
         {
-            this.id = id;
             this.stages = stages;
-            var idBytes = Encoding.UTF8.GetBytes(id);
 
-            //header is keyword CA FE AB BA -id length (int) - id - payload
-            header = new byte[] {0xCA, 0xFE, 0xAB, 0xBA}
-                .Union(BitConverter.GetBytes(idBytes.Length))
-                .Union(idBytes)
-                .ToArray();
+            header = SaveBinaryHeader.FromPipelineId(id);
 
             if (stages.Length < 1)
             {
@@ -67,7 +59,7 @@ namespace Unibrics.Saves.Pipeline
                 result = stages[i].ProcessOutStream(result);
             }
 
-            var bytes = (byte[]) result;
+            return header.AddItselfTo((byte[]) result);
         }
 
         public SaveModel ConvertFromBytes(byte[] raw)
