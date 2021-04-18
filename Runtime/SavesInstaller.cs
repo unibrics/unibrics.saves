@@ -18,20 +18,20 @@
             PreparePipeline();
             BindSaveables();
 
-            services.AddSingleton<SaveScheduler>(typeof(ISaveScheduler), typeof(ITickable));
-            services.AddSingleton<ISaveProcessor, SaveProcessor>();
-            services.AddSingleton<ISaveInjector, SaveInjector>();
-            services.AddSingleton<ISaveWriter, SaveWriter>();
-            services.AddSingleton<ISaveIoWorker, LocalSaveWorker>();
+            services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
+            services.Add<ISaveProcessor>().ImplementedBy<SaveProcessor>().AsSingleton();
+            services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
+            services.Add<ISaveWriter>().ImplementedBy<SaveWriter>().AsSingleton();
+            services.Add<ISaveIoWorker>().ImplementedBy<LocalSaveWorker>().AsSingleton();
 
             void PreparePipeline()
             {
                 var settings = AppSettings.Get<SaveSettingsSection>();
                 var factory = new SavePipelineFactory();
-                services.AddSingleton<ISavePipelineFactory>(factory);
+                services.Add<ISavePipelineFactory>().ImplementedByInstance(factory);
                 
                 var defaultPipeline = factory.CreatePipeline(settings.Pipeline);
-                services.AddSingleton<ISavePipeline>(defaultPipeline);
+                services.Add<ISavePipeline>().ImplementedByInstance(defaultPipeline);
             }
             
             void BindSaveables()
@@ -42,7 +42,8 @@
                     var typesToBind = attr.BindTo;
                     typesToBind.Add(typeof(ISaveable));
 
-                    services.AddSingleton(typesToBind, type);
+                    services.Add(typesToBind.ToArray()).ImplementedByInstance(type);
+                    
                 }
             }
         }
