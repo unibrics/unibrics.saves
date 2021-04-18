@@ -12,7 +12,7 @@ namespace Unibrics.Saves
     /// This entity is responsible for extracting save from saveable components
     /// and for injecting saves into them
     /// </summary>
-    interface ISaveProcessor
+    internal interface ISaveProcessor
     {
         void LoadFromSave(ISaveObject saveObject);
         
@@ -27,9 +27,35 @@ namespace Unibrics.Saves
         [Inject]
         public ISaveInjector Injector { get; set; }
         
+        private List<ISaveable> initialSaveables = new List<ISaveable>();
+        
         public void LoadFromSave(ISaveObject saveObject)
         {
-            throw new System.NotImplementedException();
+            if (saveObject.IsInitial)
+            {
+
+            }
+            else
+            {
+                TryRestore(saveObject, saveObject.Result.Header.Timestamp);
+            }
+        }
+        
+        private void TryRestore(ISaveObject saveObject, DateTime lastSaveTime)
+        {
+            foreach (var persistent in Saveables)
+            {
+                var result = Injector.TryInjectSaves(saveObject.Result.Components, persistent, lastSaveTime);
+                if (result == SaveInjectionResult.Fail)
+                {
+                    throw new Exception($"Could not insert into {persistent}");
+                }
+
+                if (result == SaveInjectionResult.NoSaveFound)
+                {
+                    initialSaveables.Add(persistent);
+                }
+            }
         }
 
         public SaveModel GetSaveForCurrentState()

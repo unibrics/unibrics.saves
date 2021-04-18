@@ -42,7 +42,7 @@
                     var typesToBind = attr.BindTo;
                     typesToBind.Add(typeof(ISaveable));
 
-                    services.Add(typesToBind.ToArray()).ImplementedByInstance(type);
+                    services.Add(typesToBind.ToArray()).ImplementedBy(type).AsSingleton();
                     
                 }
             }

@@ -1,14 +1,13 @@
-namespace Unibrics.Saves.Pipeline
+namespace Unibrics.Saves.Pipeline.JsonNet
 {
     using System.Runtime.Serialization;
-    using System.Runtime.Serialization.Formatters;
     using Model;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Newtonsoft.Json.Linq;
 
     [SavePipelineStage("serialize.jobject")]
-    class JsonNetPipelineStage : SavePipelineStage<SaveModel, JObject>
+    internal class JsonNetPipelineStage : SavePipelineStage<SaveModel, JObject>
     {
         private JsonSerializer serializer;
 
@@ -23,7 +22,7 @@ namespace Unibrics.Saves.Pipeline
                 NullValueHandling = NullValueHandling.Ignore
             });
             
-            // serializer.Converters.Add(new SaveModelConverter());
+            serializer.Converters.Add(new SaveModelConverter());
             serializer.Converters.Add(new StringEnumConverter());
             // serializer.Converters.AddRange(extraConverters);
             

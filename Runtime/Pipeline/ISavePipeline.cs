@@ -1,26 +1,25 @@
 namespace Unibrics.Saves.Pipeline
 {
-    using System;
     using System.Linq;
-    using System.Text;
     using Exceptions;
     using Model;
 
-    interface ISavePipeline
+    interface ISavePipeline : ISaveModelSerializer
     {
-        byte[] ConvertToBytes(SaveModel model);
-
-        SaveModel ConvertFromBytes(byte[] raw);
+        public string Id { get; }
     }
 
     class SavePipeline : ISavePipeline
     {
+        public string Id { get; }
+        
         private readonly ISavePipelineStage[] stages;
 
         private readonly SaveBinaryHeader header;
 
         public SavePipeline(string id, ISavePipelineStage[] stages)
         {
+            Id = id;
             this.stages = stages;
 
             header = SaveBinaryHeader.FromPipelineId(id);
@@ -51,6 +50,8 @@ namespace Unibrics.Saves.Pipeline
             }
         }
 
+        
+
         public byte[] ConvertToBytes(SaveModel model)
         {
             object result = model;
@@ -62,7 +63,7 @@ namespace Unibrics.Saves.Pipeline
             return header.AddItselfTo((byte[]) result);
         }
 
-        public SaveModel ConvertFromBytes(byte[] raw)
+        public SaveParsingResult ConvertFromBytes(byte[] raw)
         {
             object result = raw;
 
@@ -73,7 +74,7 @@ namespace Unibrics.Saves.Pipeline
             }
 
             //type check is performed during initialization
-            return (SaveModel) result;
+            return new SaveParsingResult((SaveModel) result);
         }
     }
 }

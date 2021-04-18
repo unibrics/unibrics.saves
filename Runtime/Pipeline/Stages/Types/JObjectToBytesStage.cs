@@ -1,10 +1,10 @@
-namespace Unibrics.Saves.Pipeline
+namespace Unibrics.Saves.Pipeline.JsonNet
 {
     using System.Text;
     using Newtonsoft.Json.Linq;
 
     [SavePipelineStage("convert.jobject.bytes")]
-    class JObjectToBytesStage : SavePipelineStage<JObject, byte[]>
+    internal class JObjectToBytesStage : SavePipelineStage<JObject, byte[]>
     {
         public override byte[] ProcessOut(JObject model)
         {

@@ -18,7 +18,7 @@ namespace Unibrics.Saves.Pipeline
         
         public object ProcessInStream(object data)
         {
-            return ProcessOut((TIn) data);
+            return ProcessIn((TOut) data);
         }
     }
 }

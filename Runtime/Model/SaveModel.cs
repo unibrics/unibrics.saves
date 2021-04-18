@@ -3,7 +3,7 @@ namespace Unibrics.Saves.Model
     using System.Collections.Generic;
     using API;
 
-    class SaveModel
+    internal class SaveModel
     {
         public SerializationHeader Header { get; }
         

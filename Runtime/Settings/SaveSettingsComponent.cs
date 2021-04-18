@@ -1,5 +1,6 @@
 namespace Unibrics.Saves.Settings
 {
+    using System.Collections.Generic;
     using Core;
     using Core.Config;
 
@@ -7,6 +8,8 @@ namespace Unibrics.Saves.Settings
     class SaveSettingsSection : IAppSettingsSection
     {
         public SavePipelineSettings Pipeline { get; set; }
+        
+        public List<SavePipelineSettings> AcceptablePipelines { get; set; }
     }
 
     class SavePipelineSettings
