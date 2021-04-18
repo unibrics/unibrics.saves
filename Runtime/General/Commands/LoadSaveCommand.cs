@@ -1,7 +1,6 @@
 namespace Unibrics.Saves.Commands
 {
     using System;
-    using Core.DI;
     using Core.Execution;
     using IoWorkers;
     using Pipeline;
@@ -11,13 +10,13 @@ namespace Unibrics.Saves.Commands
     {
         private readonly ISaveIoWorker worker;
         private readonly ISaveProcessor saver;
-        private readonly ISavePipeline savePipeline;
+        private readonly ISaveModelSerializer serializer;
 
-        internal LoadSaveCommand(ISaveIoWorker worker, ISaveProcessor saver, ISavePipeline savePipeline)
+        internal LoadSaveCommand(ISaveIoWorker worker, ISaveProcessor saver, ISaveModelSerializer serializer)
         {
             this.worker = worker;
             this.saver = saver;
-            this.savePipeline = savePipeline;
+            this.serializer = serializer;
         }
 
         protected override async void ExecuteInternal()
@@ -31,10 +30,7 @@ namespace Unibrics.Saves.Commands
                 return;
             }
 
-            var dataWithoutHeader = header.Value.ExtractPayload(bytes);
-            var pipeline = GetCorrectPipelineFor(header.Value.PipelineId);
-
-            ISaveObject save = new LocalSaveObject(pipeline.ConvertFromBytes(dataWithoutHeader).SaveModel);
+            ISaveObject save = new LocalSaveObject(serializer.ConvertFromBytes(bytes).SaveModel);
             if (save.IsEmpty)
             {
                 save = new InitialSaveObject();
@@ -60,14 +56,5 @@ namespace Unibrics.Saves.Commands
         }
 
 
-        private ISavePipeline GetCorrectPipelineFor(string id)
-        {
-            if (savePipeline.Id == id)
-            {
-                return savePipeline;
-            }
-
-            throw new Exception("Unknown pipeline");
-        }
     }
 }

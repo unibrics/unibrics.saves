@@ -13,14 +13,14 @@ namespace Unibrics.Saves
     internal class SaveWriter : ISaveWriter
     {
         [Inject]
-        public ISavePipeline SavePipeline { get; set; }
+        public ISaveModelSerializer Serializer { get; set; }
 
         [Inject]
         public ISaveIoWorker IoWorker { get; set; }
         
         public async void Write(SaveModel saveData)
         {
-            await IoWorker.Write(SavePipeline.ConvertToBytes(saveData));
+            await IoWorker.Write(Serializer.ConvertToBytes(saveData));
         }
     }
 }

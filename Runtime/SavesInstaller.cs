@@ -1,5 +1,6 @@
 ﻿namespace Unibrics.Saves
 {
+    using System.Linq;
     using API;
     using Core;
     using Core.DI;
@@ -31,7 +32,9 @@
                 services.Add<ISavePipelineFactory>().ImplementedByInstance(factory);
                 
                 var defaultPipeline = factory.CreatePipeline(settings.Pipeline);
-                services.Add<ISavePipeline>().ImplementedByInstance(defaultPipeline);
+                var acceptablePipelines = settings.AcceptablePipelines.Select(factory.CreatePipeline).ToList();
+                var serializer = new MultiPipelineSaveModelSerializer(defaultPipeline, acceptablePipelines);
+                services.Add<ISaveModelSerializer>().ImplementedByInstance(serializer);
             }
             
             void BindSaveables()
