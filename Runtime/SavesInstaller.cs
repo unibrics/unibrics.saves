@@ -5,6 +5,7 @@
     using Core;
     using Core.DI;
     using Core.Services;
+    using Format;
     using Injector;
     using IoWorkers;
     using Pipeline;
@@ -28,6 +29,8 @@
             void PreparePipeline()
             {
                 var settings = AppSettings.Get<SaveSettingsSection>();
+                services.Add<ISaveFormatVersionProvider>().ImplementedByInstance(settings);
+                
                 var factory = new SavePipelineFactory();
                 services.Add<ISavePipelineFactory>().ImplementedByInstance(factory);
                 
