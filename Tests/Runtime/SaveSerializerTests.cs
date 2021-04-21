@@ -4,7 +4,10 @@ namespace Unibrics.Saves.Tests
     using System.Collections.Generic;
     using System.Linq;
     using API;
+    using Format;
     using Model;
+    using Newtonsoft.Json.Linq;
+    using NSubstitute;
     using NUnit.Framework;
     using Pipeline;
     using Pipeline.Gzip;
@@ -16,10 +19,10 @@ namespace Unibrics.Saves.Tests
         private const int TestValue = 5;
 
         private readonly ISavePipeline defaultPipeline = new SavePipeline("initial",
-            new ISavePipelineStage[] {new JsonNetPipelineStage(), new JObjectToBytesStage()});
+            new ISavePipelineStage[] {new JsonNetPipelineStage(new StubJsonConverter()), new JObjectToBytesStage()});
 
         private readonly ISavePipeline extendedPipeline = new SavePipeline("extended",
-            new ISavePipelineStage[] {new JsonNetPipelineStage(), new JObjectToBytesStage(), new GzipStage()});
+            new ISavePipelineStage[] {new JsonNetPipelineStage(new StubJsonConverter()), new JObjectToBytesStage(), new GzipStage()});
 
         private SaveModel SampleModel => new SaveModel(new SerializationHeader(DateTime.Now, 1),
             new List<ISaveComponent> {new StubSaveable() {TestValue = TestValue}});
@@ -71,5 +74,13 @@ namespace Unibrics.Saves.Tests
         protected override string Name => "Stub";
 
         public int TestValue { get; set; }
+    }
+
+    class StubJsonConverter : ISaveFormatConverter
+    {
+        public JObject ConvertToLatest(JObject json)
+        {
+            return json;
+        }
     }
 }

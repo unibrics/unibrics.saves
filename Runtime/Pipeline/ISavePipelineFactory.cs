@@ -4,6 +4,7 @@ namespace Unibrics.Saves.Pipeline
     using System.Collections.Generic;
     using System.Linq;
     using Core;
+    using Core.DI;
     using Exceptions;
     using Settings;
     using Tools;
@@ -17,8 +18,12 @@ namespace Unibrics.Saves.Pipeline
     {
         private readonly IDictionary<string, Type> availableStageTypes;
 
-        public SavePipelineFactory()
+        private readonly IInstanceProvider instanceProvider;
+
+        public SavePipelineFactory(IInstanceProvider instanceProvider)
         {
+            this.instanceProvider = instanceProvider;
+            
             availableStageTypes = Types.AnnotatedWith<SavePipelineStageAttribute>()
                 .WithParent(typeof(ISavePipelineStage))
                 .ToDictionary(tuple => tuple.attribute.Id, tuple => tuple.type);
@@ -36,7 +41,7 @@ namespace Unibrics.Saves.Pipeline
                     throw new BrokenSavePipelineException($"Unknown stage id {id}");
                 }
 
-                stages[i] = (ISavePipelineStage) Activator.CreateInstance(availableStageTypes[id]);
+                stages[i] = (ISavePipelineStage)instanceProvider.GetInstance(availableStageTypes[id]);
             }
 
             return new SavePipeline(settings.Id, stages);

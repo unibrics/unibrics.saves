@@ -4,9 +4,9 @@ namespace Unibrics.Saves.Format
 
     public abstract class IncrementalSaveFormatConverter
     {
-        public abstract bool CanConvertableFrom(int version);
-        
-        public abstract int GoalVersion { get; }
+        public abstract int OriginalVersion { get; }
+
+        public int GoalVersion => OriginalVersion + 1;
 
         public abstract void Process(JObject jObject);
     }

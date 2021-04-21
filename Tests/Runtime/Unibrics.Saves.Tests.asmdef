@@ -15,7 +15,8 @@
         "Castle.Core.dll",
         "nunit.framework.dll",
         "System.Threading.Tasks.Extensions.dll",
-        "NSubstitute.dll"
+        "NSubstitute.dll",
+        "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [],

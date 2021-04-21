@@ -1,6 +1,7 @@
 namespace Unibrics.Saves.Pipeline.JsonNet
 {
     using System.Runtime.Serialization;
+    using Format;
     using Model;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -10,9 +11,15 @@ namespace Unibrics.Saves.Pipeline.JsonNet
     internal class JsonNetPipelineStage : SavePipelineStage<SaveModel, JObject>
     {
         private JsonSerializer serializer;
-
         private JsonSerializer Serializer => serializer ??= CreateSerializer();
-        
+
+        private ISaveFormatConverter saveFormatConverter;
+
+        public JsonNetPipelineStage(ISaveFormatConverter saveFormatConverter)
+        {
+            this.saveFormatConverter = saveFormatConverter;
+        }
+
         private JsonSerializer CreateSerializer()
         {
             var serializer = JsonSerializer.Create
@@ -39,7 +46,7 @@ namespace Unibrics.Saves.Pipeline.JsonNet
 
         public override SaveModel ProcessIn(JObject json)
         {
-            return json.ToObject<SaveModel>(Serializer);
+            return saveFormatConverter.ConvertToLatest(json).ToObject<SaveModel>(Serializer);
         }
     }
 }

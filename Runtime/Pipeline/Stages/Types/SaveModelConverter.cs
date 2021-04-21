@@ -53,6 +53,10 @@ namespace Unibrics.Saves.Pipeline.JsonNet
 
             foreach (var entry in jObject)
             {
+                if (entry.Value == null)
+                {
+                    throw new Exception($"Null entries are not supported is settings file, but entry {entry.Key} found");
+                }
                 var key = entry.Key;
                 if (key == HeaderKey)
                 {
