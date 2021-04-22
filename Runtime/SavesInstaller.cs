@@ -4,6 +4,7 @@
     using API;
     using Core;
     using Core.DI;
+    using Core.Launchers;
     using Core.Services;
     using Format;
     using Injector;
@@ -18,9 +19,7 @@
         public override void Install(IServicesRegistry services)
         {
             var settings = AppSettings.Get<SaveSettingsSection>();
-            
-            PrepareSaveConverter();
-            PreparePipeline();
+
             BindSaveables();
 
             services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
@@ -28,32 +27,14 @@
             services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
             services.Add<ISaveWriter>().ImplementedBy<SaveWriter>().AsSingleton();
             services.Add<ISaveIoWorker>().ImplementedBy<LocalSaveWorker>().AsSingleton();
+            services.Add<ISaveFormatVersionProvider>().ImplementedByInstance(settings);
+            services.Add<ISavePipelinesProvider>().ImplementedBy<SettingsBasedSavePipelinesProvider>().AsSingleton();
+            services.Add<ISavePipelineFactory>().ImplementedBy<SavePipelineFactory>().AsSingleton();
+            services.Add<ISaveModelSerializer>().ImplementedBy<MultiPipelineSaveModelSerializer>().AsSingleton();
             services.Add<ISaveFormatConverter>().ImplementedBy<SaveFormatConverter>().AsSingleton();
+            services.Add<IIncrementalSaveConvertersProvider>().ImplementedBy<IncrementalSaveConvertersProvider>()
+                .AsSingleton();
 
-            void PreparePipeline()
-            {
-                services.Add<ISaveFormatVersionProvider>().ImplementedByInstance(settings);
-                
-                var factory = new SavePipelineFactory(services.InstanceProvider);
-                services.Add<ISavePipelineFactory>().ImplementedByInstance(factory);
-                
-                var defaultPipeline = factory.CreatePipeline(settings.Pipeline);
-                var acceptablePipelines = settings.AcceptablePipelines.Select(factory.CreatePipeline).ToList();
-                var serializer = new MultiPipelineSaveModelSerializer(defaultPipeline, acceptablePipelines);
-                services.Add<ISaveModelSerializer>().ImplementedByInstance(serializer);
-            }
-
-            void PrepareSaveConverter()
-            {
-                var converters = Types.AnnotatedWith<InstallAttribute>()
-                    .WithParent(typeof(IncrementalSaveFormatConverter))
-                    .TypesOnly()
-                    .CreateInstances<IncrementalSaveFormatConverter>().ToArray();
-
-                services.Add<ISaveFormatConverter>()
-                    .ImplementedByInstance(new SaveFormatConverter(settings, converters));
-            }
-            
             void BindSaveables()
             {
                 var saveableTuples = Types.AnnotatedWith<SaveableAttribute>().WithParent(typeof(ISaveable));
@@ -63,7 +44,6 @@
                     typesToBind.Add(typeof(ISaveable));
 
                     services.Add(typesToBind.ToArray()).ImplementedBy(type).AsSingleton();
-                    
                 }
             }
         }

@@ -20,10 +20,10 @@ namespace Unibrics.Saves.Pipeline
 
         private readonly List<ISavePipeline> acceptablePipelines;
 
-        public MultiPipelineSaveModelSerializer(ISavePipeline defaultPipeline, List<ISavePipeline> acceptablePipelines)
+        public MultiPipelineSaveModelSerializer(ISavePipelinesProvider pipelinesProvider)
         {
-            this.defaultPipeline = defaultPipeline;
-            this.acceptablePipelines = acceptablePipelines;
+            defaultPipeline = pipelinesProvider.GetDefaultPipeline();
+            acceptablePipelines = pipelinesProvider.GetAcceptablePipelines();
         }
 
         public byte[] ConvertToBytes(SaveModel model)

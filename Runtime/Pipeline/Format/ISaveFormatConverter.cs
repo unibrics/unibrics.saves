@@ -18,7 +18,7 @@ namespace Unibrics.Saves.Format
         private readonly IncrementalSaveFormatConverter[] converters;
 
         public SaveFormatConverter(ISaveFormatVersionProvider versionProvider,
-            IncrementalSaveFormatConverter[] converters)
+            IIncrementalSaveConvertersProvider provider)
         {
             currentVersion = versionProvider.SaveFormatVersion;
             minVersion = versionProvider.MinimumSupportedSaveFormatVersion;
@@ -29,13 +29,13 @@ namespace Unibrics.Saves.Format
                     $"could not be less than minimal version ({minVersion})");
             }
 
+            converters = provider.GetConverters().ToArray();
+            
             for (var version = minVersion; version < currentVersion; version++)
             {
                 EnsureSinglePathExistsFrom(version);
             }
-
-            this.converters = converters;
-
+            
             void EnsureSinglePathExistsFrom(int version)
             {
                 var originalVersion = version;
