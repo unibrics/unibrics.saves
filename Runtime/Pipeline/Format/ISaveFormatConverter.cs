@@ -56,7 +56,7 @@ namespace Unibrics.Saves.Format
                 if (version != currentVersion)
                 {
                     throw new SaveFormatConversionException(
-                        $"Can not find path for upgrading version {originalVersion} to {version}, only to {currentVersion} found");
+                        $"Can not find path for upgrading version {originalVersion} to {currentVersion}, only to {version} found");
                 }
             }
         }
