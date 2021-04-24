@@ -27,6 +27,7 @@ namespace Unibrics.Saves.Commands
             var header = SaveBinaryHeader.FromPrefixedArray(bytes);
             if (header.HasError)
             {
+                ReleaseAndComplete();
                 return;
             }
 

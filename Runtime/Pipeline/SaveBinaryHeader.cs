@@ -38,7 +38,7 @@ namespace Unibrics.Saves.Pipeline
 
         internal static ValueOrError<SaveBinaryHeader, SaveHeaderError> FromPrefixedArray(byte[] array)
         {
-            if (array.Length < 8)
+            if (array == null || array.Length < 8)
             {
                 return ValueOrError<SaveBinaryHeader, SaveHeaderError>.FromError(SaveHeaderError.ArrayIsToShort);
             }
