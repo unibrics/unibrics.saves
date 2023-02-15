@@ -16,11 +16,11 @@ namespace Unibrics.Saves
         public ISaveModelSerializer Serializer { get; set; }
 
         [Inject]
-        public ISaveIoWorker IoWorker { get; set; }
+        public ISaveIoWriter Writer { get; set; }
         
         public async void Write(SaveModel saveData)
         {
-            await IoWorker.Write(saveData.Group, Serializer.ConvertToBytes(saveData));
+            await Writer.Write(saveData.Group, Serializer.ConvertToBytes(saveData));
         }
     }
 }

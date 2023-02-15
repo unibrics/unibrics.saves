@@ -1,13 +1,15 @@
 ﻿namespace Unibrics.Saves.IoWorkers
 {
     using System;
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
 
     public class StubSaveIoWorker : ILocalSaveIoWorker
     {
-        public UniTask<byte[]> Read()
+        public UniTask<IEnumerable<byte[]>> Read()
         {
-            return UniTask.FromResult(Array.Empty<byte>());
+            IEnumerable<byte[]> bytesList = new List<byte[]>(){Array.Empty<byte>()};
+            return UniTask.FromResult(bytesList);
         }
 
         public UniTask<bool> Write(string saveDataGroup, byte[] data)
@@ -15,9 +17,10 @@
             return UniTask.FromResult(true);
         }
 
-        public byte[] ReadSync()
+        public IEnumerable<byte[]> ReadSync()
         {
-            return Array.Empty<byte>();
+            IEnumerable<byte[]> bytesList = new List<byte[]>(){Array.Empty<byte>()};
+            return bytesList;
         }
 
         public bool WriteSync(string saveGroup, byte[] data)

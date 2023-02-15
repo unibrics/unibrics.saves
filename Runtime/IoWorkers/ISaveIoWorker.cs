@@ -1,5 +1,7 @@
 namespace Unibrics.Saves.IoWorkers
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// This interface implementations should not know anything about
     /// cyphers, data models, jsons, serialization etc. - only read\write, input\output
@@ -10,7 +12,7 @@ namespace Unibrics.Saves.IoWorkers
     
     public interface ILocalSaveIoWorker : ISaveIoWorker
     {
-        byte[] ReadSync();
+        IEnumerable<byte[]> ReadSync();
 
         bool WriteSync(string saveGroup, byte[] data);
     }

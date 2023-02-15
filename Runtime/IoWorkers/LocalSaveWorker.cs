@@ -1,27 +1,29 @@
 namespace Unibrics.Saves.IoWorkers
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using Cysharp.Threading.Tasks;
     using UnityEngine;
 
     public class LocalSaveWorker : ILocalSaveIoWorker
     {
-        private string FilenameFor(string group) => Path.Combine(Application.persistentDataPath, $"save.{group}.dat");
+        private const string Prefix = "save.";
+        
+        private string FilenameFor(string group) => Path.Combine(Application.persistentDataPath, $"{Prefix}{group}.dat");
 
-        public UniTask<byte[]> Read()
+        public UniTask<IEnumerable<byte[]>> Read()
         {
             return UniTask.FromResult(ReadSync());
         }
 
-        public byte[] ReadSync()
+        public IEnumerable<byte[]> ReadSync()
         {
-            if (!File.Exists(FilenameFor("")))
+            foreach (var fileName in Directory.GetFiles(Application.persistentDataPath, $"{Prefix}*.dat"))
             {
-                return null;
+                Debug.Log(fileName);
+                yield return File.ReadAllBytes(fileName);
             }
-
-            return File.ReadAllBytes(FilenameFor(""));
         }
 
         public bool WriteSync(string saveGroup, byte[] data)

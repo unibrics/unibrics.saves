@@ -1,9 +1,10 @@
 ﻿namespace Unibrics.Saves.IoWorkers
 {
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
 
     public interface ISaveIoReader
     {
-        UniTask<byte[]> Read();
+        UniTask<IEnumerable<byte[]>> Read();
     }
 }

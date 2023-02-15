@@ -1,5 +1,6 @@
 ﻿namespace Unibrics.Saves.IoWorkers
 {
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using UnityEditor;
     using UnityEngine;
@@ -17,7 +18,7 @@
 
         public ISaveIoWorker RemoteWorker { get; private set; } = new StubSaveIoWorker();
 
-        public UniTask<byte[]> Read()
+        public UniTask<IEnumerable<byte[]>> Read()
         {
             return RemoteWorker.Read();
         }

@@ -66,7 +66,7 @@ namespace Unibrics.Saves.Commands
 
         private async UniTask<SaveParsingResult> LoadFrom(ISaveIoWorker worker)
         {
-            var bytes = await worker.Read();
+            var parts = await worker.Read();
             return Serializer.ConvertFromBytes(bytes);
         }
     }
