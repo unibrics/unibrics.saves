@@ -20,5 +20,13 @@ namespace Unibrics.Saves.Model
             GroupName = groupName;
             FormatVersion = formatVersion;
         }
+        
+        public SerializationHeader(DateTime timestamp, string buildVersion, string groupName, int formatVersion)
+        {
+            Timestamp = timestamp;
+            BuildVersion = buildVersion;
+            GroupName = groupName;
+            FormatVersion = formatVersion;
+        }
     }
 }

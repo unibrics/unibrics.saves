@@ -1,6 +1,8 @@
 namespace Unibrics.Saves.Commands
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using API;
     using Conflicts;
     using Core.DI;
@@ -67,7 +69,33 @@ namespace Unibrics.Saves.Commands
         private async UniTask<SaveParsingResult> LoadFrom(ISaveIoWorker worker)
         {
             var parts = await worker.Read();
-            return Serializer.ConvertFromBytes(bytes);
+            return Combine(parts.Select(part => Serializer.ConvertFromBytes(part)).ToList());
+
+            SaveParsingResult Combine(List<SaveParsingResult> results)
+            {
+                if (results.Any(result => result.HasErrors))
+                {
+                    return SaveParsingResult.Corrupted;
+                }
+
+                var fullComponents = results.Where(result => !result.IsEmpty).ToList();
+                if (!fullComponents.Any())
+                {
+                    return SaveParsingResult.Empty;
+                }
+                
+                var headers = results.Select(result => result.SaveModel.Header).ToList();
+                
+                // timestamp and version of combined header is defined by maximum version and timestamp.
+                // Actually, all versions must be equal at that point because of conversion to latest version
+                var combinedHeader = new SerializationHeader(headers.Max(header => header.Timestamp),
+                    headers.Select(header => new Version(header.BuildVersion)).Max().ToString(),
+                    "combined", headers.Max(header => header.FormatVersion));
+                var combined = new SaveModel(combinedHeader,
+                    fullComponents.SelectMany(component => component.SaveModel.Components).ToList());
+
+                return new SaveParsingResult(combined, fullComponents.Sum(result => result.BytesTotal));
+            }
         }
     }
 }

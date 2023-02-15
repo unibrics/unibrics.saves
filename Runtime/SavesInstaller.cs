@@ -36,7 +36,7 @@
             services.Add<IAutoConflictSolver>().ImplementedBy<AutoConflictSolver>().AsSingleton();
             services.Add<ISaveSummaryExtractor>().ImplementedBy<SimpleSaveSummaryExtractor>().AsSingleton();
             services.Add<ICombinedSaveConflictSolver>().ImplementedBy<CombinedSaveConflictSolver>().AsSingleton();
-            services.Add<ISaveIoWorker, ISaveIoWorkersProvider, ISaveWorkersConfigurator>().ImplementedBy<ComboSaveWorker>().AsSingleton();
+            services.Add<ISaveIoWriter, ISaveIoWorkersProvider, ISaveWorkersConfigurator>().ImplementedBy<ComboSaveWorker>().AsSingleton();
             services.Add<IFirstSessionChecker>().ImplementedBy<SimpleFirstSessionChecker>().AsSingleton();
             services.Add<ISaveWriter>().ImplementedBy<SaveWriter>().AsSingleton();
             services.Add<ISavePipelinesProvider>().ImplementedBy<SettingsBasedSavePipelinesProvider>().AsSingleton();
