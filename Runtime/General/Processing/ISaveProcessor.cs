@@ -6,8 +6,10 @@ namespace Unibrics.Saves
     using API;
     using Core.DI;
     using Format;
+    using Groups;
     using Injector;
     using Model;
+    using UnityEngine;
 
     /// <summary>
     /// This entity is responsible for extracting save from saveable components
@@ -17,27 +19,37 @@ namespace Unibrics.Saves
     {
         void LoadFromSave(ISaveObject saveObject);
         
-        SaveModel GetSaveForCurrentState();
+        IEnumerable<SaveModel> GetSavesForCurrentState(List<string> groups);
     }
 
     class SaveProcessor : ISaveProcessor, INewSaveablesInitializer
     {
         [Inject]
-        public List<ISaveable> Saveables { get; set; }
-
-        [Inject]
         public ISaveInjector Injector { get; set; }
         
         [Inject]
         public ISaveFormatVersionProvider FormatVersionProvider { get; set; }
-        
-        private List<ISaveable> initialSaveables = new List<ISaveable>();
-        
+
+        private readonly List<ISaveable> saveables;
+
+        private readonly List<ISaveable> initialSaveables = new();
+
+        public SaveProcessor(List<ISaveable> saveables, ISaveGroupProvider saveGroupProvider)
+        {
+            this.saveables = saveables;
+            foreach (var saveable in saveables)
+            {
+                var component = saveable.SaveComponentName;
+                Debug.Log($"{component} is {saveGroupProvider.GetGroupFor(component)}");
+                saveable.InitializeSaveGroup(saveGroupProvider.GetGroupFor(component));
+            }
+        }
+
         public void LoadFromSave(ISaveObject saveObject)
         {
             if (saveObject.IsInitial)
             {
-
+                MarkForLaterInit(saveables);
             }
             else
             {
@@ -45,9 +57,17 @@ namespace Unibrics.Saves
             }
         }
         
+        private void MarkForLaterInit(IReadOnlyList<ISaveable> saveables)
+        {
+            foreach (var persistent in saveables)
+            {
+                initialSaveables.Add(persistent);
+            }
+        }
+        
         private void TryRestore(ISaveObject saveObject, DateTime lastSaveTime)
         {
-            foreach (var persistent in Saveables)
+            foreach (var persistent in saveables)
             {
                 var result = Injector.TryInjectSaves(saveObject.Result.Components, persistent, lastSaveTime);
                 if (result == SaveInjectionResult.Fail)
@@ -62,10 +82,38 @@ namespace Unibrics.Saves
             }
         }
 
-        public SaveModel GetSaveForCurrentState()
+        public IEnumerable<SaveModel> GetSavesForCurrentState(List<string> groups)
         {
-            var header = new SerializationHeader(DateTime.UtcNow, FormatVersionProvider.SaveFormatVersion);
-            return new SaveModel(header, Saveables.Select(saveable => Injector.GetSave(saveable)).ToList());
+            // we are processing the most often case of saving one group differently to exclude extra LINQ stuff
+            if (groups is { Count: 1 })
+            {
+                var group = groups[0];
+                yield return new SaveModel(GetHeaderFor(group),
+                    GetSaves(saveables.Where(saveable => saveable.SaveGroup == group)));
+                
+                yield break;
+            }
+            
+            IEnumerable<ISaveable> toSave = saveables;
+            if (groups != null)
+            {
+                toSave = saveables.Where(saveable => groups.Contains(saveable.SaveGroup));
+            }
+            
+            foreach (var saveablesGroup in toSave.GroupBy(saveable => saveable.SaveGroup))
+            {
+                yield return new SaveModel(GetHeaderFor(saveablesGroup.Key), GetSaves(saveablesGroup));        
+            }
+
+            List<ISaveComponent> GetSaves(IEnumerable<ISaveable> saveables)
+            {
+                return saveables.Select(saveable => Injector.GetSave(saveable)).ToList();
+            }
+
+            SerializationHeader GetHeaderFor(string group)
+            {
+                return new SerializationHeader(DateTime.UtcNow, group, FormatVersionProvider.SaveFormatVersion);
+            }
         }
 
         public void InitializeComponentsWithoutSaves()

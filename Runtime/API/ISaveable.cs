@@ -3,7 +3,7 @@
     using System;
     using Cysharp.Threading.Tasks;
 
-    interface ISaveable
+    internal interface ISaveable
     {
         /// <summary>
         /// Called on first load to create default save
@@ -14,12 +14,18 @@
         /// Call after successful loading AND all configs are ready 
         /// </summary>
         UniTask Start();
+        
+        string SaveGroup { get; }
+        
+        internal string SaveComponentName { get; }
+
+        internal void InitializeSaveGroup(string group);
     }
     
-    interface ISaveable<T> : ISaveable where T : ISaveComponent
+    internal interface ISaveable<T> : ISaveable where T : ISaveComponent
     {
         T Serialize();
-
+        
         void Deserialize(T save, DateTime lastSaveTime);
     }
 }

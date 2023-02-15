@@ -20,7 +20,7 @@ namespace Unibrics.Saves
         
         public async void Write(SaveModel saveData)
         {
-            await IoWorker.Write(Serializer.ConvertToBytes(saveData));
+            await IoWorker.Write(saveData.Group, Serializer.ConvertToBytes(saveData));
         }
     }
 }

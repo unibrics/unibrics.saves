@@ -1,5 +1,6 @@
 namespace Unibrics.Saves
 {
+    using System.Collections.Generic;
     using API;
     using Core.DI;
 
@@ -10,14 +11,16 @@ namespace Unibrics.Saves
 
         [Inject]
         public ISaveWriter Writer { get; set; }
-
         
         private bool saveRequested;
-        
-        public void RequestSave()
+
+        private readonly List<string> requestedGroups = new();
+
+        public void RequestSave(string saveGroup)
         {
             //we are processing request only once in frame, to avoid extra saves in one frame
             saveRequested = true;
+            requestedGroups.Add(saveGroup);
         }
 
         public void ForceSave()
@@ -33,12 +36,16 @@ namespace Unibrics.Saves
             }
 
             saveRequested = false;
-            PerformSave();
+            PerformSave(requestedGroups);
+            requestedGroups.Clear();
         }
 
-        private void PerformSave()
+        private void PerformSave(List<string> groups = null)
         {
-            Writer.Write(SaveProcessor.GetSaveForCurrentState());
+            foreach (var saveModel in SaveProcessor.GetSavesForCurrentState(groups))
+            {
+                Writer.Write(saveModel);    
+            }
         }
     }
 }

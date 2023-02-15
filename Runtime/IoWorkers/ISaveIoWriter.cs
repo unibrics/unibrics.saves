@@ -4,6 +4,6 @@
 
     public interface ISaveIoWriter
     {
-        UniTask<bool> Write(byte[] data);
+        UniTask<bool> Write(string saveDataGroup, byte[] data);
     }
 }

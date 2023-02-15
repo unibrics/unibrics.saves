@@ -10,7 +10,7 @@
             return UniTask.FromResult(Array.Empty<byte>());
         }
 
-        public UniTask<bool> Write(byte[] data)
+        public UniTask<bool> Write(string saveDataGroup, byte[] data)
         {
             return UniTask.FromResult(true);
         }
@@ -20,7 +20,7 @@
             return Array.Empty<byte>();
         }
 
-        public bool WriteSync(byte[] data)
+        public bool WriteSync(string saveGroup, byte[] data)
         {
             return true;
         }

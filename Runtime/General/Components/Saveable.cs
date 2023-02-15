@@ -9,10 +9,19 @@
     {
         [Inject]
         public ISaveScheduler SaveScheduler { get; set; }
-        
+
+        string ISaveable.SaveComponentName => new T().GetName();
+
+        public string SaveGroup { get; private set; }
+
         public void PrepareInitial()
         {
             Deserialize(PrepareInitialSave(), DateTime.UtcNow);
+        }
+
+        void ISaveable.InitializeSaveGroup(string group)
+        {
+            SaveGroup = group;
         }
 
         public virtual UniTask Start()
@@ -22,7 +31,7 @@
         
         protected void ScheduleSave()
         {
-            SaveScheduler.RequestSave();
+            SaveScheduler.RequestSave(SaveGroup);
         }
 
         protected virtual T PrepareInitialSave()
@@ -31,6 +40,7 @@
         }
         
         public abstract T Serialize();
+        
 
         public abstract void Deserialize(T save, DateTime lastSaveTime);
     }

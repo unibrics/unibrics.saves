@@ -8,7 +8,8 @@
         /// Request game state saving.
         /// Actual save will be performed later during current frame
         /// </summary>
-        void RequestSave();
+        /// <param name="saveGroup"></param>
+        void RequestSave(string saveGroup);
 
         /// <summary>
         /// Request immediate state saving

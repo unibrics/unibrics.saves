@@ -12,6 +12,6 @@ namespace Unibrics.Saves.IoWorkers
     {
         byte[] ReadSync();
 
-        bool WriteSync(byte[] data);
+        bool WriteSync(string saveGroup, byte[] data);
     }
 }

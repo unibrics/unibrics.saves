@@ -7,7 +7,7 @@ namespace Unibrics.Saves.IoWorkers
 
     public class LocalSaveWorker : ILocalSaveIoWorker
     {
-        private readonly string filename = Path.Combine(Application.persistentDataPath, "save.dat");
+        private string FilenameFor(string group) => Path.Combine(Application.persistentDataPath, $"save.{group}.dat");
 
         public UniTask<byte[]> Read()
         {
@@ -16,19 +16,19 @@ namespace Unibrics.Saves.IoWorkers
 
         public byte[] ReadSync()
         {
-            if (!File.Exists(filename))
+            if (!File.Exists(FilenameFor("")))
             {
                 return null;
             }
 
-            return File.ReadAllBytes(filename);
+            return File.ReadAllBytes(FilenameFor(""));
         }
 
-        public bool WriteSync(byte[] data)
+        public bool WriteSync(string saveGroup, byte[] data)
         {
             try
             {
-                SafeWriteFile(data, filename);
+                SafeWriteFile(data, FilenameFor(saveGroup));
                 return true;
             }
             catch (Exception e)
@@ -38,9 +38,9 @@ namespace Unibrics.Saves.IoWorkers
             }
         }
 
-        public UniTask<bool> Write(byte[] data)
+        public UniTask<bool> Write(string saveGroup, byte[] data)
         {
-            return UniTask.FromResult<bool>(WriteSync(data));
+            return UniTask.FromResult(WriteSync(saveGroup, data));
         }
 
         /// <summary>

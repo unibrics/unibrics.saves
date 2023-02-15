@@ -2,6 +2,7 @@
 {
     using Cysharp.Threading.Tasks;
     using UnityEditor;
+    using UnityEngine;
 
     public interface ISaveIoWorkersProvider
     {
@@ -21,11 +22,11 @@
             return RemoteWorker.Read();
         }
 
-        public async UniTask<bool> Write(byte[] data)
+        public async UniTask<bool> Write(string saveDataGroup, byte[] data)
         {
-            await LocalWorker.Write(data);
+            await LocalWorker.Write(saveDataGroup, data);
 
-            RemoteWorker.Write(data);
+            RemoteWorker.Write(saveDataGroup, data);
             return true;
         }
 
