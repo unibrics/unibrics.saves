@@ -3,6 +3,7 @@
     using System;
     using API;
     using Core.DI;
+    using Cysharp.Threading.Tasks;
 
     public abstract class Saveable<T> : ISaveable<T> where T : SaveComponent, new()
     {
@@ -14,8 +15,9 @@
             Deserialize(PrepareInitialSave(), DateTime.UtcNow);
         }
 
-        public virtual void Start()
+        public virtual UniTask Start()
         {
+            return UniTask.CompletedTask;
         }
         
         protected void ScheduleSave()

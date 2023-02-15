@@ -19,7 +19,7 @@ namespace Unibrics.Saves
         SaveModel GetSaveForCurrentState();
     }
 
-    class SaveProcessor : ISaveProcessor
+    class SaveProcessor : ISaveProcessor, INewSaveablesInitializer
     {
         [Inject]
         public List<ISaveable> Saveables { get; set; }
@@ -62,6 +62,14 @@ namespace Unibrics.Saves
         {
             var header = new SerializationHeader(DateTime.UtcNow, 1);
             return new SaveModel(header, Saveables.Select(saveable => Injector.GetSave(saveable)).ToList());
+        }
+
+        public void InitializeComponentsWithoutSaves()
+        {
+            foreach (var initialSaveable in initialSaveables)
+            {
+                initialSaveable.PrepareInitial();
+            }
         }
     }
 }

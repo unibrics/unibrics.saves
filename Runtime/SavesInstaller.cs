@@ -23,7 +23,7 @@
             BindSaveables();
 
             services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
-            services.Add<ISaveProcessor>().ImplementedBy<SaveProcessor>().AsSingleton();
+            services.Add<ISaveProcessor, INewSaveablesInitializer>().ImplementedBy<SaveProcessor>().AsSingleton();
             services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
             services.Add<IFirstSessionChecker>().ImplementedBy<SimpleFirstSessionChecker>().AsSingleton();
             services.Add<ISaveWriter>().ImplementedBy<SaveWriter>().AsSingleton();

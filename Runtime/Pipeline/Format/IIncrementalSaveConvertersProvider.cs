@@ -17,7 +17,8 @@ namespace Unibrics.Saves.Format
             return Types.AnnotatedWith<InstallAttribute>()
                 .WithParent(typeof(IncrementalSaveFormatConverter))
                 .TypesOnly()
-                .CreateInstances<IncrementalSaveFormatConverter>();
+                .CreateInstances<IncrementalSaveFormatConverter>()
+                .OrderBy(converter => converter.OriginalVersion);
         }
     }
 }

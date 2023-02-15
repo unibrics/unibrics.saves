@@ -1,6 +1,7 @@
 ﻿namespace Unibrics.Saves.API
 {
     using System;
+    using Cysharp.Threading.Tasks;
 
     interface ISaveable
     {
@@ -12,7 +13,7 @@
         /// <summary>
         /// Call after successful loading AND all configs are ready 
         /// </summary>
-        void Start();
+        UniTask Start();
     }
     
     interface ISaveable<T> : ISaveable where T : ISaveComponent

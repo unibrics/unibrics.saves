@@ -33,10 +33,21 @@ namespace Unibrics.Saves.Pipeline
 
         public SaveParsingResult ConvertFromBytes(byte[] raw)
         {
+            if (raw == null || raw.Length == 0) 
+            {
+                return SaveParsingResult.Empty;
+            }
+            
             var headerOrError = SaveBinaryHeader.FromPrefixedArray(raw);
             if (!headerOrError.IsOk)
             {
-                return SaveParsingResult.Corrupted;
+                var headlessPipeline = acceptablePipelines.FirstOrDefault(pipeline => pipeline.Id == "headless");
+                if (headlessPipeline == null)
+                {
+                    return SaveParsingResult.Corrupted;
+                }
+
+                return headlessPipeline.ConvertFromBytes(raw);
             }
 
             var header = headerOrError.Value;
