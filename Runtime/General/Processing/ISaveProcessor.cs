@@ -5,6 +5,7 @@ namespace Unibrics.Saves
     using System.Linq;
     using API;
     using Core.DI;
+    using Format;
     using Injector;
     using Model;
 
@@ -26,6 +27,9 @@ namespace Unibrics.Saves
 
         [Inject]
         public ISaveInjector Injector { get; set; }
+        
+        [Inject]
+        public ISaveFormatVersionProvider FormatVersionProvider { get; set; }
         
         private List<ISaveable> initialSaveables = new List<ISaveable>();
         
@@ -60,7 +64,7 @@ namespace Unibrics.Saves
 
         public SaveModel GetSaveForCurrentState()
         {
-            var header = new SerializationHeader(DateTime.UtcNow, 1);
+            var header = new SerializationHeader(DateTime.UtcNow, FormatVersionProvider.SaveFormatVersion);
             return new SaveModel(header, Saveables.Select(saveable => Injector.GetSave(saveable)).ToList());
         }
 

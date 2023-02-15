@@ -2,6 +2,9 @@
 {
     using System.Linq;
     using API;
+    using Conflicts;
+    using Conflicts.Auto;
+    using Conflicts.Manual;
     using Core;
     using Core.DI;
     using Core.Launchers;
@@ -12,6 +15,7 @@
     using Pipeline;
     using Settings;
     using Tools;
+    using Utils;
 
     [Install]
     public class SavesInstaller : ModuleInstaller
@@ -25,6 +29,11 @@
             services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
             services.Add<ISaveProcessor, INewSaveablesInitializer>().ImplementedBy<SaveProcessor>().AsSingleton();
             services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
+            services.Add<IDebugSaveWriter>().ImplementedBy<DebugSaveWriter>().AsSingleton();
+            services.Add<IAutoConflictSolver>().ImplementedBy<AutoConflictSolver>().AsSingleton();
+            services.Add<ISaveSummaryExtractor>().ImplementedBy<SimpleSaveSummaryExtractor>().AsSingleton();
+            services.Add<ICombinedSaveConflictSolver>().ImplementedBy<CombinedSaveConflictSolver>().AsSingleton();
+            services.Add<ISaveIoWorker, ISaveIoWorkersProvider, ISaveWorkersConfigurator>().ImplementedBy<ComboSaveWorker>().AsSingleton();
             services.Add<IFirstSessionChecker>().ImplementedBy<SimpleFirstSessionChecker>().AsSingleton();
             services.Add<ISaveWriter>().ImplementedBy<SaveWriter>().AsSingleton();
             services.Add<ISaveFormatVersionProvider>().ImplementedByInstance(settings);
@@ -35,6 +44,9 @@
             services.Add<IIncrementalSaveConvertersProvider>().ImplementedBy<IncrementalSaveConvertersProvider>()
                 .AsSingleton();
 
+            // things that can be rebound
+            services.Add<IManualConflictSolver>().ImplementedBy<LocalChoosingSolver>().AsSingleton();
+            
             void BindSaveables()
             {
                 var saveableTuples = Types.AnnotatedWith<SaveableAttribute>().WithParent(typeof(ISaveable));
