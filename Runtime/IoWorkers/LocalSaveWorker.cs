@@ -5,32 +5,42 @@ namespace Unibrics.Saves.IoWorkers
     using Cysharp.Threading.Tasks;
     using UnityEngine;
 
-    public class LocalSaveWorker : ISaveIoWorker
+    public class LocalSaveWorker : ILocalSaveIoWorker
     {
         private readonly string filename = Path.Combine(Application.persistentDataPath, "save.dat");
 
         public UniTask<byte[]> Read()
         {
-            if (!File.Exists(filename))
-            {
-                return UniTask.FromResult<byte[]>(null);
-            }
-
-            return UniTask.FromResult(File.ReadAllBytes(filename));
+            return UniTask.FromResult(ReadSync());
         }
 
-        public UniTask<bool> Write(byte[] data)
+        public byte[] ReadSync()
+        {
+            if (!File.Exists(filename))
+            {
+                return null;
+            }
+
+            return File.ReadAllBytes(filename);
+        }
+
+        public bool WriteSync(byte[] data)
         {
             try
             {
                 SafeWriteFile(data, filename);
-                return UniTask.FromResult(true);
+                return true;
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
-                return UniTask.FromResult(false);
+                return false;
             }
+        }
+
+        public UniTask<bool> Write(byte[] data)
+        {
+            return UniTask.FromResult<bool>(WriteSync(data));
         }
 
         /// <summary>

@@ -1,50 +1,58 @@
 namespace Unibrics.Saves.Commands
 {
     using System;
+    using API;
+    using Conflicts;
+    using Core.DI;
     using Core.Execution;
+    using Cysharp.Threading.Tasks;
     using IoWorkers;
+    using Model;
     using Pipeline;
     using UnityEngine;
+    using Utils;
 
     public class LoadSaveCommand : ExecutableCommand
     {
-        private readonly ISaveIoWorker worker;
-        private readonly ISaveProcessor saver;
-        private readonly ISaveModelSerializer serializer;
+        [Inject]
+        public ISaveIoWorkersProvider WorkersProvider { get; set; }
 
-        internal LoadSaveCommand(ISaveIoWorker worker, ISaveProcessor saver, ISaveModelSerializer serializer)
-        {
-            this.worker = worker;
-            this.saver = saver;
-            this.serializer = serializer;
-        }
+        [Inject]
+        ISaveModelSerializer Serializer { get; set; }
+        
+        [Inject]
+        ICombinedSaveConflictSolver ConflictSolver { get; set; }
+        
+        [Inject]
+        IDebugSaveWriter DebugSaveWriter { get; set; }
 
+        [Inject]
+        ISaveProcessor SaveProcessor { get; set; }
+
+        [Inject]
+        public IFirstSessionChecker FirstSessionChecker { get; set; }
+        
         protected override async void ExecuteInternal()
         {
             Retain();
-            var bytes = await worker.Read();
+            
+            SaveObject localSave = new LocalSaveObject(await LoadFrom(WorkersProvider.LocalWorker));
+            SaveObject remoteSave = new RemoteSaveObject(await LoadFrom(WorkersProvider.RemoteWorker));
 
-            var header = SaveBinaryHeader.FromPrefixedArray(bytes);
-            if (header.HasError)
+            var chosenSave = await ConflictSolver.ChooseCorrectData(localSave, remoteSave);
+            if (chosenSave.IsEmpty)
             {
-                ReleaseAndComplete();
-                return;
-            }
-
-            ISaveObject save = new LocalSaveObject(serializer.ConvertFromBytes(bytes).SaveModel);
-            if (save.IsEmpty)
-            {
-                save = new InitialSaveObject();
-                //FirstSessionChecker.MarkCurrentSessionAsFirst();
+                chosenSave = new InitialSaveObject();
+                FirstSessionChecker.MarkCurrentSessionAsFirst();
             }
             else
             {
-                //WriteLoadedSaveAsJson(save);    
+                DebugSaveWriter.WriteSave(chosenSave.Result, "savefile.loaded.json");
             }
 
             try
             {
-                saver.LoadFromSave(save);
+                SaveProcessor.LoadFromSave(chosenSave);
             }
             catch (Exception e)
             {
@@ -56,6 +64,10 @@ namespace Unibrics.Saves.Commands
             ReleaseAndComplete();
         }
 
-
+        private async UniTask<SaveParsingResult> LoadFrom(ISaveIoWorker worker)
+        {
+            var bytes = await worker.Read();
+            return Serializer.ConvertFromBytes(bytes);
+        }
     }
 }

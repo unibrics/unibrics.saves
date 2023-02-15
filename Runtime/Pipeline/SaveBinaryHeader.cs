@@ -4,6 +4,7 @@ namespace Unibrics.Saves.Pipeline
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Unibrics.Utils;
     using Utils;
 
     public class SaveBinaryHeader

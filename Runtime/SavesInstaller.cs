@@ -25,8 +25,8 @@
             services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
             services.Add<ISaveProcessor>().ImplementedBy<SaveProcessor>().AsSingleton();
             services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
+            services.Add<IFirstSessionChecker>().ImplementedBy<SimpleFirstSessionChecker>().AsSingleton();
             services.Add<ISaveWriter>().ImplementedBy<SaveWriter>().AsSingleton();
-            services.Add<ISaveIoWorker>().ImplementedBy<LocalSaveWorker>().AsSingleton();
             services.Add<ISaveFormatVersionProvider>().ImplementedByInstance(settings);
             services.Add<ISavePipelinesProvider>().ImplementedBy<SettingsBasedSavePipelinesProvider>().AsSingleton();
             services.Add<ISavePipelineFactory>().ImplementedBy<SavePipelineFactory>().AsSingleton();

@@ -74,7 +74,7 @@ namespace Unibrics.Saves.Pipeline
             }
 
             //type check is performed during initialization
-            return new SaveParsingResult((SaveModel) result);
+            return new SaveParsingResult((SaveModel) result, raw.Length);
         }
     }
 }

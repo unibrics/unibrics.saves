@@ -1,7 +1,5 @@
 namespace Unibrics.Saves.IoWorkers
 {
-    using Cysharp.Threading.Tasks;
-
     /// <summary>
     /// This interface implementations should not know anything about
     /// cyphers, data models, jsons, serialization etc. - only read\write, input\output
@@ -9,14 +7,11 @@ namespace Unibrics.Saves.IoWorkers
     public interface ISaveIoWorker : ISaveIoReader, ISaveIoWriter
     {
     }
-
-    public interface ISaveIoReader
+    
+    public interface ILocalSaveIoWorker : ISaveIoWorker
     {
-        UniTask<byte[]> Read();
-    }
+        byte[] ReadSync();
 
-    public interface ISaveIoWriter
-    {
-        UniTask<bool> Write(byte[] data);
+        bool WriteSync(byte[] data);
     }
 }
