@@ -1,6 +1,7 @@
 namespace Unibrics.Saves.Model
 {
     using System;
+    using Newtonsoft.Json;
     using UnityEngine;
 
     public class SerializationHeader
@@ -21,6 +22,7 @@ namespace Unibrics.Saves.Model
             FormatVersion = formatVersion;
         }
         
+        [JsonConstructor]
         public SerializationHeader(DateTime timestamp, string buildVersion, string groupName, int formatVersion)
         {
             Timestamp = timestamp;

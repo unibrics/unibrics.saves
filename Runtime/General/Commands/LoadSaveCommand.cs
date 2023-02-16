@@ -49,7 +49,7 @@ namespace Unibrics.Saves.Commands
             }
             else
             {
-                DebugSaveWriter.WriteSave(chosenSave.Result, "savefile.loaded.json");
+                DebugSaveWriter.WriteSave(chosenSave.Result, "save.loaded.json");
             }
 
             try

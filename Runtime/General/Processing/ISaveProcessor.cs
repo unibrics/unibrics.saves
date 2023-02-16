@@ -40,7 +40,6 @@ namespace Unibrics.Saves
             foreach (var saveable in saveables)
             {
                 var component = saveable.SaveComponentName;
-                Debug.Log($"{component} is {saveGroupProvider.GetGroupFor(component)}");
                 saveable.InitializeSaveGroup(saveGroupProvider.GetGroupFor(component));
             }
         }

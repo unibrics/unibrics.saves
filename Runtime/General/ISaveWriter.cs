@@ -4,6 +4,7 @@ namespace Unibrics.Saves
     using IoWorkers;
     using Model;
     using Pipeline;
+    using Utils;
 
     interface ISaveWriter
     {
@@ -18,8 +19,13 @@ namespace Unibrics.Saves
         [Inject]
         public ISaveIoWriter Writer { get; set; }
         
+        [Inject]
+        public IDebugSaveWriter DebugSaveWriter { get; set; }
+        
         public async void Write(SaveModel saveData)
         {
+            DebugSaveWriter.WriteSave(saveData, $"save.{saveData.Group}.unpacked.json");
+            
             await Writer.Write(saveData.Group, Serializer.ConvertToBytes(saveData));
         }
     }
