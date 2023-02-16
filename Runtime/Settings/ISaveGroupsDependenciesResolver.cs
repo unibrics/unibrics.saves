@@ -23,6 +23,12 @@
 
         public void ValidateAndPrepare(Dictionary<string, List<string>> dependencies)
         {
+            if (dependencies == null)
+            {
+                return;
+            }
+            
+            fullDependencies.Clear();
             var permanent = new List<string>();
             var temporary = new List<string>();
             foreach (var dependency in dependencies)

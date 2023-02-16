@@ -32,6 +32,7 @@
             services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
             services.Add<ISaveProcessor, INewSaveablesInitializer>().ImplementedBy<SaveProcessor>().AsSingleton();
             services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
+            services.Add<ISaveGroupsDependenciesResolver>().ImplementedBy<SaveGroupsDependenciesResolver>().AsSingleton();
             services.Add<IDebugSaveWriter>().ImplementedBy<DebugSaveWriter>().AsSingleton();
             services.Add<IAutoConflictSolver>().ImplementedBy<AutoConflictSolver>().AsSingleton();
             services.Add<ISaveSummaryExtractor>().ImplementedBy<SimpleSaveSummaryExtractor>().AsSingleton();

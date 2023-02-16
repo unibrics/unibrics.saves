@@ -18,6 +18,8 @@ namespace Unibrics.Saves.Settings
         public List<SavePipelineSettings> AcceptablePipelines { get; set; }
         
         public Dictionary<string, string> SaveComponentGroups { get; set; }
+        
+        public Dictionary<string, List<string>> GroupsDependencies { get; set; }
 
         private const string DefaultGroup = "main";
         

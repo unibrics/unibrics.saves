@@ -9,6 +9,7 @@ namespace Unibrics.Saves
     using Groups;
     using Injector;
     using Model;
+    using Settings;
     using UnityEngine;
 
     /// <summary>
@@ -30,18 +31,24 @@ namespace Unibrics.Saves
         [Inject]
         public ISaveFormatVersionProvider FormatVersionProvider { get; set; }
 
+        private ISaveGroupsDependenciesResolver dependenciesResolver;
+
         private readonly List<ISaveable> saveables;
 
         private readonly List<ISaveable> initialSaveables = new();
 
-        public SaveProcessor(List<ISaveable> saveables, ISaveGroupProvider saveGroupProvider)
+        public SaveProcessor(List<ISaveable> saveables, ISaveGroupProvider saveGroupProvider, ISaveGroupsDependenciesResolver dependenciesResolver)
         {
             this.saveables = saveables;
+            this.dependenciesResolver = dependenciesResolver;
+            
             foreach (var saveable in saveables)
             {
                 var component = saveable.SaveComponentName;
                 saveable.InitializeSaveGroup(saveGroupProvider.GetGroupFor(component));
             }
+            
+            dependenciesResolver.ValidateAndPrepare(saveGroupProvider.GroupsDependencies);
         }
 
         public void LoadFromSave(ISaveObject saveObject)
@@ -83,6 +90,9 @@ namespace Unibrics.Saves
 
         public IEnumerable<SaveModel> GetSavesForCurrentState(List<string> groups)
         {
+            // if groups is not null, add all dependencies to that list
+            groups = groups?.Concat(dependenciesResolver.ResolveGroupsToSave(groups)).Distinct().ToList();
+            
             // we are processing the most often case of saving one group differently to exclude extra LINQ stuff
             if (groups is { Count: 1 })
             {
