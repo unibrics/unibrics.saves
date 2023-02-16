@@ -1,7 +1,7 @@
 {
   "name": "unibrics.saves",
   "displayName": "Unibrics Saves",
-  "version": "0.0.1-preview",
+  "version": "0.2.0",
   "unity": "2021.1",
   "description": "Package Sample.",
   "dependencies": {
