@@ -3,6 +3,7 @@ namespace Unibrics.Saves
     using System.Collections.Generic;
     using API;
     using Core.DI;
+    using Core.Features;
 
     class SaveScheduler : ISaveScheduler, ITickable
     {
@@ -11,6 +12,9 @@ namespace Unibrics.Saves
 
         [Inject]
         public ISaveWriter Writer { get; set; }
+
+        [Inject]
+        public IFeatureSet FeatureSet { get; set; }
         
         private bool saveRequested;
 
@@ -42,6 +46,11 @@ namespace Unibrics.Saves
 
         private void PerformSave(List<string> groups = null)
         {
+            if (FeatureSet.GetFeature<SavesFeature>().IsSuspended)
+            {
+                return;
+            }
+            
             foreach (var saveModel in SaveProcessor.GetSavesForCurrentState(groups))
             {
                 Writer.Write(saveModel);    

@@ -1,9 +1,9 @@
 {
   "name": "unibrics.saves",
   "displayName": "Unibrics Saves",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "unity": "2021.1",
-  "description": "Package Sample.",
+  "description": "NoSQL saves system",
   "dependencies": {
     "com.cysharp.unitask": "2.2.4",
     "net.tnrd.nsubstitute": "4.2.2",

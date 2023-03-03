@@ -4,7 +4,7 @@
 
     interface ISaveGroupProvider
     {
-        string GetGroupFor(string component);
+         string GetGroupFor(string component);
         
          Dictionary<string, List<string>> GroupsDependencies { get; }
     }
