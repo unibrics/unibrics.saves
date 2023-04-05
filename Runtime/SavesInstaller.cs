@@ -21,13 +21,10 @@
     [Install]
     public class SavesInstaller : ModuleInstaller
     {
-        public override string Id => "unibrics.saves";
-
         public override void Install(IServicesRegistry services)
         {
             var settings = AppSettings.Get<SaveSettingsSection>();
             services.Add<ISaveFormatVersionProvider, ISaveGroupProvider>().ImplementedByInstance(settings);
-
 
             BindSaveables();
 
