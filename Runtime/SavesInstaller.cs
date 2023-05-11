@@ -28,6 +28,7 @@
 
             BindSaveables();
 
+            services.Add(typeof(ISaveContext), typeof(ISaveBlocker)).ImplementedBy<SaveContext>().AsSingleton();
             services.Add(typeof(ISaveScheduler), typeof(ITickable)).ImplementedBy<SaveScheduler>().AsSingleton();
             services.Add<ISaveProcessor, INewSaveablesInitializer>().ImplementedBy<SaveProcessor>().AsSingleton();
             services.Add<ISaveInjector>().ImplementedBy<SaveInjector>().AsSingleton();
