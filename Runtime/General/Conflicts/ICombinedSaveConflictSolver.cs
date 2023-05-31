@@ -1,6 +1,8 @@
 ﻿namespace Unibrics.Saves.Conflicts
 {
     using System;
+    using System.Collections.Generic;
+    using API;
     using Auto;
     using Core.DI;
     using Cysharp.Threading.Tasks;
@@ -24,15 +26,17 @@
         
         [Inject]
         public ISaveFormatVersionProvider SaveFormatVersionProvider { get; set; }
+
+        [Inject]
+        public List<ISaveCameFromNewerVersionProcessor> UnknownSavesProcessors { get; set; }
         
         public async UniTask<SaveObject> ChooseCorrectData(SaveObject localData, SaveObject remoteData, bool tryAutoSolve = true)
         {
             if (SaveCameFromNewerBuild(localData) || SaveCameFromNewerBuild(remoteData))
             {
-                //await UiBuilder.CreateWindow<SaveCameFromNewerBuildWindow>(UiRootType.Any).WaitForClosed();
-                return null;
+                UnknownSavesProcessors.ForEach(processor => processor.OnSaveCameFromNewerBuild());
+                return await new UniTaskCompletionSource<SaveObject>().Task;
             }
-            
             
             //if both are empty, it's probably first session, so no difference what to return
             if (localData.IsEmpty && remoteData.IsEmpty)
