@@ -15,10 +15,17 @@ namespace Unibrics.Saves
 
         [Inject]
         public IFeatureSet FeatureSet { get; set; }
-        
+
+        private readonly ISaveBlocker saveBlocker;
+        private readonly List<string> requestedGroups = new();
+
         private bool saveRequested;
 
-        private readonly List<string> requestedGroups = new();
+        public SaveScheduler(ISaveBlocker saveBlocker)
+        {
+            this.saveBlocker = saveBlocker;
+            saveBlocker.SaveUnblocked += ForceSave;
+        }
 
         public void RequestSave(string saveGroup)
         {
@@ -50,10 +57,15 @@ namespace Unibrics.Saves
             {
                 return;
             }
-            
+
+            if (saveBlocker.IsBlocked)
+            {
+                return;
+            }
+
             foreach (var saveModel in SaveProcessor.GetSavesForCurrentState(groups))
             {
-                Writer.Write(saveModel);    
+                Writer.Write(saveModel);
             }
         }
     }
