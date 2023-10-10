@@ -5,18 +5,24 @@ namespace Unibrics.Saves.Injector
     using System.Linq;
     using API;
     using Core;
+    using Core.DI;
     using Tools;
 
     internal class SaveInjector : ISaveInjector
     {
         private readonly List<SaveComponentInjector> injectors = new List<SaveComponentInjector>();
 
-        public SaveInjector()
+        public SaveInjector(IInjector injector)
         {
             injectors.AddRange(Types.WithParent<ISaveComponent>()
                 .Where(type => !type.IsAbstract)
                 .Select(type => typeof(SaveComponentInjector<>).MakeGenericType(type))
                 .CreateInstances<SaveComponentInjector>());
+
+            foreach (var componentInjector in injectors)
+            {
+                injector.InjectTo(componentInjector);
+            }
         }
 
         public SaveInjectionResult TryInjectSaves(List<ISaveComponent> saves, ISaveable persistent,
