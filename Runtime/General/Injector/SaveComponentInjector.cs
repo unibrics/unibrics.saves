@@ -4,6 +4,7 @@ namespace Unibrics.Saves.Injector
     using System.Collections.Generic;
     using System.Linq;
     using API;
+    using Core.DI;
     using UnityEngine;
 
     abstract class SaveComponentInjector
@@ -19,6 +20,9 @@ namespace Unibrics.Saves.Injector
     
     class SaveComponentInjector<T> : SaveComponentInjector where T : class, ISaveComponent
     {
+        [Inject]
+        public List<ISaveComponentsProcessor> Processors { get; set; }
+        
         public override bool CanWorkWith(ISaveable persistent)
         {
             return persistent is ISaveable<T>;
@@ -33,8 +37,10 @@ namespace Unibrics.Saves.Injector
                 return false;
             }
 
+            var orderedProcessors = Processors.OrderByDescending(processor => processor.Priority).ToList();
             try
             {
+                orderedProcessors.ForEach(processor => processor.ProcessExistingComponent(typedSave));
                 typedPersistent.Deserialize(typedSave, lastSaveTime);
                 return true;
             }

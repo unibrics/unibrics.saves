@@ -1,6 +1,7 @@
 ﻿namespace Unibrics.Saves
 {
     using System;
+    using System.Collections.Generic;
     using API;
     using Core.DI;
     using Cysharp.Threading.Tasks;
@@ -14,9 +15,11 @@
 
         public string SaveGroup { get; private set; }
 
-        public void PrepareInitial()
+        public void PrepareInitial(List<ISaveComponentsProcessor> saveComponentsProcessors)
         {
-            Deserialize(PrepareInitialSave(), DateTime.UtcNow);
+            var save = PrepareInitialSave();
+            saveComponentsProcessors.ForEach(processor => processor.ProcessNewComponent(save));
+            Deserialize(save, DateTime.UtcNow);
         }
 
         void ISaveable.InitializeSaveGroup(string group)

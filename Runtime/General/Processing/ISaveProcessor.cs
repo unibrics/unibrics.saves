@@ -31,6 +31,9 @@ namespace Unibrics.Saves
         [Inject]
         public ISaveFormatVersionProvider FormatVersionProvider { get; set; }
 
+        [Inject]
+        public List<ISaveComponentsProcessor> Processors { get; set; }
+
         private ISaveGroupsDependenciesResolver dependenciesResolver;
 
         private readonly List<ISaveable> saveables;
@@ -127,9 +130,10 @@ namespace Unibrics.Saves
 
         public void InitializeComponentsWithoutSaves()
         {
+            var orderedProcessors = Processors.OrderByDescending(processor => processor.Priority).ToList();
             foreach (var initialSaveable in initialSaveables)
             {
-                initialSaveable.PrepareInitial();
+                initialSaveable.PrepareInitial(orderedProcessors);
             }
         }
     }

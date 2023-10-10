@@ -1,6 +1,7 @@
 ﻿namespace Unibrics.Saves.API
 {
     using System;
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
 
     internal interface ISaveable
@@ -8,7 +9,8 @@
         /// <summary>
         /// Called on first load to create default save
         /// </summary>
-        void PrepareInitial();
+        /// <param name="saveComponentsProcessors"></param>
+        void PrepareInitial(List<ISaveComponentsProcessor> saveComponentsProcessors);
 
         /// <summary>
         /// Call after successful loading AND all configs are ready 

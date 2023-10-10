@@ -4,7 +4,7 @@ namespace Unibrics.Saves.API
     /// interface for partial saves such as DailyBonus, Tutorial, Wallet etc.
     /// which must be combined into one big SaveModel and saved
     /// </summary>
-    interface ISaveComponent
+    public interface ISaveComponent
     {
         /// <summary>
         /// This Name will be used as a top-level key in JSON tree of save.
