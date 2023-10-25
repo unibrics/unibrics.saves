@@ -13,11 +13,15 @@ namespace Unibrics.Saves.Pipeline.JsonNet
         private JsonSerializer serializer;
         private JsonSerializer Serializer => serializer ??= CreateSerializer();
 
-        private ISaveFormatConverter saveFormatConverter;
+        private readonly ISaveFormatConverter saveFormatConverter;
 
-        public JsonNetPipelineStage(ISaveFormatConverter saveFormatConverter)
+        private readonly ISaveJsonSerializerConfigurator configurator;
+
+        public JsonNetPipelineStage(ISaveFormatConverter saveFormatConverter,
+            ISaveJsonSerializerConfigurator configurator)
         {
             this.saveFormatConverter = saveFormatConverter;
+            this.configurator = configurator;
         }
 
         private JsonSerializer CreateSerializer()
@@ -31,7 +35,10 @@ namespace Unibrics.Saves.Pipeline.JsonNet
             
             serializer.Converters.Add(new SaveModelConverter());
             serializer.Converters.Add(new StringEnumConverter());
-            // serializer.Converters.AddRange(extraConverters);
+            foreach (var extraConverter in configurator.ExtraConverters)
+            {
+                serializer.Converters.Add(extraConverter);
+            }
             
             serializer.TypeNameHandling = TypeNameHandling.Auto;
             serializer.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;

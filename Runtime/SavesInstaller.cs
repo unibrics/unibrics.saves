@@ -14,6 +14,7 @@
     using Injector;
     using IoWorkers;
     using Pipeline;
+    using Pipeline.JsonNet;
     using Settings;
     using Tools;
     using Utils;
@@ -46,6 +47,8 @@
             services.Add<ISaveFormatConverter>().ImplementedBy<SaveFormatConverter>().AsSingleton();
             services.Add<IIncrementalSaveConvertersProvider>().ImplementedBy<IncrementalSaveConvertersProvider>()
                 .AsSingleton();
+            
+            services.Add<ISaveJsonSerializerConfigurator>().ImplementedBy<SaveJsonSerializerConfigurator>().AsSingleton();
             
             // things that can be rebound
             services.Add<IManualConflictSolver>().ImplementedBy<LocalChoosingSolver>().AsSingleton();

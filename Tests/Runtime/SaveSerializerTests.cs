@@ -19,11 +19,11 @@ namespace Unibrics.Saves.Tests
         private const int TestValue = 5;
 
         private readonly ISavePipeline defaultPipeline = new SavePipeline("initial",
-            new ISavePipelineStage[] {new JsonNetPipelineStage(new StubJsonConverter()), new JObjectToBytesStage()});
+            new ISavePipelineStage[] {new JsonNetPipelineStage(new StubJsonConverter(), new SaveJsonSerializerConfigurator()), new JObjectToBytesStage()});
 
         private readonly ISavePipeline extendedPipeline = new SavePipeline("extended",
             new ISavePipelineStage[]
-                {new JsonNetPipelineStage(new StubJsonConverter()), new JObjectToBytesStage(), new GzipStage()});
+                {new JsonNetPipelineStage(new StubJsonConverter(), new SaveJsonSerializerConfigurator()), new JObjectToBytesStage(), new GzipStage()});
 
         private SaveModel SampleModel => new SaveModel(new SerializationHeader(DateTime.Now, "default", 1),
             new List<ISaveComponent> {new StubSaveable() {TestValue = TestValue}});
