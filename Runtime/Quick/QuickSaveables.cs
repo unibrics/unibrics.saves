@@ -4,6 +4,7 @@ namespace Unibrics.Saves.Quick
     using System.Collections.Generic;
     using System.Linq;
     using API;
+    using UnityEngine;
 
     [Saveable(typeof(IQuickSaveables))]
     class QuickSaveables : Saveable<QuickSaveablesSaveData>, IQuickSaveables
@@ -21,7 +22,7 @@ namespace Unibrics.Saves.Quick
                 saveables.Add(newSaveable);
                 if (restoredSaveables.TryGetValue(key, out var val))
                 {
-                    newSaveable.Value = (T)val;
+                    newSaveable.Value = (T)GetValue(val);
                     restoredSaveables.Remove(key);
                 }
 
@@ -34,6 +35,20 @@ namespace Unibrics.Saves.Quick
             }
 
             return qs;
+
+            object GetValue(object value)
+            {
+                if (typeof(T) == typeof(int))
+                {
+                    return (int)(long)value;
+                } 
+                if (typeof(T) == typeof(float))
+                {
+                    return (float)(double)value;
+                }
+
+                return value;
+            }
         }
 
         public override QuickSaveablesSaveData Serialize()
