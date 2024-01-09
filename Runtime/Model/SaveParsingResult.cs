@@ -1,6 +1,6 @@
 namespace Unibrics.Saves.Model
 {
-    internal struct SaveParsingResult
+    public struct SaveParsingResult
     {
         public static SaveParsingResult Empty => new SaveParsingResult();
         

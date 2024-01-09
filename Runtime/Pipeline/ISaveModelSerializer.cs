@@ -4,7 +4,7 @@ namespace Unibrics.Saves.Pipeline
     using System.Linq;
     using Model;
 
-    internal interface ISaveModelSerializer
+    public interface ISaveModelSerializer
     {
         byte[] ConvertToBytes(SaveModel model);
 
