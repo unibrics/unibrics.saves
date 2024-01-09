@@ -2,7 +2,7 @@
 {
     using Model;
 
-    class LocalSaveObject : SaveObject
+    public class LocalSaveObject : SaveObject
     {
         public override bool IsLocalSave => true;
 

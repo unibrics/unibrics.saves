@@ -2,7 +2,7 @@
 {
     using Model;
 
-    abstract class SaveObject : ISaveObject
+    public abstract class SaveObject : ISaveObject
     {
         public virtual bool IsLocalSave { get; }
 
