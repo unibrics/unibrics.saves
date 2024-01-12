@@ -2,7 +2,7 @@ namespace Unibrics.Saves.API
 {
     using System;
 
-    internal interface ISaveBlocker
+    public interface ISaveBlocker
     {
         event Action SaveUnblocked;
 
