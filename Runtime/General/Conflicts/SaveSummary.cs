@@ -12,7 +12,7 @@
 
         public int Version { get; set; }
 
-        public SaveCompareResult CompareTo(ISaveSummary summary)
+        public virtual SaveCompareResult CompareTo(ISaveSummary summary)
         {
             if (!(summary is T typed))
             {
