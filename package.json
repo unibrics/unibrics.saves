@@ -1,7 +1,7 @@
 {
   "name": "unibrics.saves",
   "displayName": "Unibrics Saves",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "unity": "2021.1",
   "description": "NoSQL saves system",
   "dependencies": {

@@ -1,6 +1,6 @@
 ﻿namespace Unibrics.Saves.Conflicts
 {
-    interface ISaveSummaryExtractor
+    public interface ISaveSummaryExtractor
     {
         ISaveSummary ExtractFrom(SaveObject saveData);
     }
