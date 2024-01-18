@@ -1,6 +1,6 @@
 ﻿namespace Unibrics.Saves.Conflicts
 {
-    class ConflictSolvingResult
+    public class ConflictSolvingResult
     {
         public ConflictSolvingResultType Type { get; }
         

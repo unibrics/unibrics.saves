@@ -2,7 +2,7 @@ namespace Unibrics.Saves.Conflicts.Manual
 {
     using Cysharp.Threading.Tasks;
 
-    interface IManualConflictSolver
+    public interface IManualConflictSolver
     {
         UniTask<SaveObject> Solve(SaveObject local, SaveObject remote);
     }

@@ -3,7 +3,7 @@
     using Core.DI;
     using Logs;
 
-    interface IAutoConflictSolver
+    public interface IAutoConflictSolver
     {
         ConflictSolvingResult TrySolve(SaveObject local, SaveObject remote);
     }
