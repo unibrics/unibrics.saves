@@ -1,5 +1,6 @@
 namespace Unibrics.Saves
 {
+    using API;
     using Core.DI;
     using IoWorkers;
     using Model;
@@ -8,8 +9,9 @@ namespace Unibrics.Saves
 
     interface ISaveWriter
     {
-        void Write(SaveModel saveData);
+        void Write(SaveModel saveData, SaveImportance importance);
     }
+    
 
     internal class SaveWriter : ISaveWriter
     {
@@ -22,11 +24,11 @@ namespace Unibrics.Saves
         [Inject]
         public IDebugSaveWriter DebugSaveWriter { get; set; }
         
-        public async void Write(SaveModel saveData)
+        public async void Write(SaveModel saveData, SaveImportance importance)
         {
             DebugSaveWriter.WriteSave(saveData, $"save.{saveData.Group}.unpacked.json");
             
-            await Writer.Write(saveData.Group, Serializer.ConvertToBytes(saveData));
+            await Writer.Write(saveData.Group, Serializer.ConvertToBytes(saveData), importance);
         }
     }
 }

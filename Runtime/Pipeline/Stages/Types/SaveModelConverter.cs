@@ -87,7 +87,7 @@ namespace Unibrics.Saves.Pipeline.JsonNet
 
             if (header == null)
             {
-                header = new SerializationHeader(DateTime.UtcNow, "default", 1);
+                header = new SerializationHeader(DateTime.UtcNow, "default", 1, null);
             }
 
             return new SaveModel(header, components.Values.ToList());

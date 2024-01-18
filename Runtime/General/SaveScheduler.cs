@@ -4,6 +4,7 @@ namespace Unibrics.Saves
     using API;
     using Core.DI;
     using Core.Features;
+    using IoWorkers;
 
     class SaveScheduler : ISaveScheduler, ITickable
     {
@@ -21,17 +22,23 @@ namespace Unibrics.Saves
 
         private bool saveRequested;
 
+        private SaveImportance requestedSaveImportance;
+
         public SaveScheduler(ISaveBlocker saveBlocker)
         {
             this.saveBlocker = saveBlocker;
             saveBlocker.SaveUnblocked += ForceSave;
         }
 
-        public void RequestSave(string saveGroup)
+        public void RequestSave(string saveGroup, SaveImportance importance)
         {
             //we are processing request only once in frame, to avoid extra saves in one frame
             saveRequested = true;
             requestedGroups.Add(saveGroup);
+            if (requestedSaveImportance == SaveImportance.Simple && importance == SaveImportance.Important)
+            {
+                requestedSaveImportance = SaveImportance.Important;
+            }
         }
 
         public void ForceSave()
@@ -48,7 +55,9 @@ namespace Unibrics.Saves
 
             saveRequested = false;
             PerformSave(requestedGroups);
+            
             requestedGroups.Clear();
+            requestedSaveImportance = SaveImportance.Simple;
         }
 
         private void PerformSave(List<string> groups = null)
@@ -65,7 +74,7 @@ namespace Unibrics.Saves
 
             foreach (var saveModel in SaveProcessor.GetSavesForCurrentState(groups))
             {
-                Writer.Write(saveModel);
+                Writer.Write(saveModel, requestedSaveImportance);
             }
         }
     }

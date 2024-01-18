@@ -1,6 +1,7 @@
 namespace Unibrics.Saves.IoWorkers
 {
     using System.Collections.Generic;
+    using API;
 
     /// <summary>
     /// This interface implementations should not know anything about

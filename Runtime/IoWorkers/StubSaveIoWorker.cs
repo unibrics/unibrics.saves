@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using API;
     using Cysharp.Threading.Tasks;
 
     public class StubSaveIoWorker : ILocalSaveIoWorker
@@ -12,7 +13,7 @@
             return UniTask.FromResult(bytesList);
         }
 
-        public UniTask<bool> Write(string saveDataGroup, byte[] data)
+        public UniTask<bool> Write(string saveDataGroup, byte[] data, SaveImportance importance)
         {
             return UniTask.FromResult(true);
         }

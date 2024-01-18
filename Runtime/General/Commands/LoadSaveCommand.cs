@@ -88,9 +88,10 @@ namespace Unibrics.Saves.Commands
                 
                 // timestamp and version of combined header is defined by maximum version and timestamp.
                 // Actually, all versions must be equal at that point because of conversion to latest version
+                // Rework for handling multiple components
                 var combinedHeader = new SerializationHeader(headers.Max(header => header.Timestamp),
                     headers.Select(header => new Version(header.BuildVersion)).Max().ToString(),
-                    "combined", headers.Max(header => header.FormatVersion));
+                    "combined", headers.Max(header => header.FormatVersion), headers.First().DeviceFingerprint);
                 var combined = new SaveModel(combinedHeader,
                     fullComponents.SelectMany(component => component.SaveModel.Components).ToList());
 

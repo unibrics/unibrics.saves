@@ -3,6 +3,7 @@ namespace Unibrics.Saves.IoWorkers
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using API;
     using Cysharp.Threading.Tasks;
     using UnityEngine;
 
@@ -40,7 +41,7 @@ namespace Unibrics.Saves.IoWorkers
             }
         }
 
-        public UniTask<bool> Write(string saveGroup, byte[] data)
+        public UniTask<bool> Write(string saveGroup, byte[] data, SaveImportance importance)
         {
             return UniTask.FromResult(WriteSync(saveGroup, data));
         }

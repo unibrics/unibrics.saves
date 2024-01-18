@@ -1,6 +1,7 @@
 ﻿namespace Unibrics.Saves.IoWorkers
 {
     using System.Collections.Generic;
+    using API;
     using Cysharp.Threading.Tasks;
     using UnityEditor;
     using UnityEngine;
@@ -23,11 +24,11 @@
             return RemoteWorker.Read();
         }
 
-        public async UniTask<bool> Write(string saveDataGroup, byte[] data)
+        public async UniTask<bool> Write(string saveDataGroup, byte[] data, SaveImportance importance)
         {
-            await LocalWorker.Write(saveDataGroup, data);
+            await LocalWorker.Write(saveDataGroup, data, importance);
 
-            RemoteWorker.Write(saveDataGroup, data);
+            RemoteWorker.Write(saveDataGroup, data, importance);
             return true;
         }
 
