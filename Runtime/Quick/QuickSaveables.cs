@@ -26,7 +26,7 @@ namespace Unibrics.Saves.Quick
                     restoredSaveables.Remove(key);
                 }
 
-                newSaveable.ValueUpdated += ScheduleSave;
+                newSaveable.ValueUpdated += () => ScheduleSave();
                 return newSaveable;
             }
             if (saveable is not IQuickSaveable<T> qs)

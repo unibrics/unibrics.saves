@@ -32,9 +32,9 @@
             return UniTask.CompletedTask;
         }
         
-        protected void ScheduleSave()
+        protected void ScheduleSave(SaveImportance importance = SaveImportance.Simple)
         {
-            SaveScheduler.RequestSave(SaveGroup);
+            SaveScheduler.RequestSave(SaveGroup, importance);
         }
 
         protected virtual T PrepareInitialSave()
