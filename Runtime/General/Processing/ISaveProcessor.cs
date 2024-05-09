@@ -6,6 +6,7 @@ namespace Unibrics.Saves
     using System.Threading;
     using System.Threading.Tasks;
     using API;
+    using Core;
     using Core.DI;
     using Core.Utils;
     using Format;
@@ -39,6 +40,9 @@ namespace Unibrics.Saves
 
         [Inject]
         public IDeviceFingerprintProvider DeviceFingerprintProvider { get; set; }
+
+        [Inject]
+        public IApplication Application { get; set; }
 
         private ISaveGroupsDependenciesResolver dependenciesResolver;
 
@@ -135,7 +139,7 @@ namespace Unibrics.Saves
             SerializationHeader GetHeaderFor(string group)
             {
                 var fingerprint = DeviceFingerprintProvider.DeviceFingerprint;
-                return new SerializationHeader(DateTime.UtcNow, group, FormatVersionProvider.SaveFormatVersion, fingerprint);
+                return new SerializationHeader(DateTime.UtcNow, Application.Version, group, FormatVersionProvider.SaveFormatVersion, fingerprint);
             }
         }
 
