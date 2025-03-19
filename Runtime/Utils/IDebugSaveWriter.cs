@@ -1,7 +1,6 @@
 ﻿namespace Unibrics.Saves.Utils
 {
     using System.IO;
-    using Core;
     using Core.DI;
     using Model;
     using Newtonsoft.Json;
@@ -17,18 +16,15 @@
     {
         private readonly JsonNetPipelineStage jsonNetPipelineStage;
 
-        private readonly IApplication application;
-
-        public DebugSaveWriter(IInstanceProvider instanceProvider, IApplication application)
+        public DebugSaveWriter(IInstanceProvider instanceProvider)
         {
             jsonNetPipelineStage = instanceProvider.GetInstance<JsonNetPipelineStage>();
-            this.application = application;
         }
 
         public void WriteSave(SaveModel save, string filename)
         {
 #if DEBUG
-            File.WriteAllText($"{application.PersistentDataPath}/{filename}",
+            File.WriteAllText($"{Application.persistentDataPath}/{filename}",
                 jsonNetPipelineStage.ProcessOut(save).ToString(Formatting.Indented));
 #endif
         }

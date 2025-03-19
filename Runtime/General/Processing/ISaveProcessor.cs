@@ -3,8 +3,6 @@ namespace Unibrics.Saves
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
     using API;
     using Core.DI;
     using Core.Utils;
@@ -82,10 +80,6 @@ namespace Unibrics.Saves
         
         private void TryRestore(ISaveObject saveObject, DateTime lastSaveTime)
         {
-            // Parallel.ForEach(saveables, persistent =>
-            // {
-            //     
-            // });
             foreach (var persistent in saveables)
             {
                 var result = Injector.TryInjectSaves(saveObject.Result.Components, persistent, lastSaveTime);

@@ -37,12 +37,11 @@ namespace Unibrics.Saves.Commands
         protected override async void ExecuteInternal()
         {
             Retain();
-            Debug.Log($"Saves loading");
+            
             SaveObject localSave = new LocalSaveObject(await LoadFrom(WorkersProvider.LocalWorker));
             SaveObject remoteSave = new RemoteSaveObject(await LoadFrom(WorkersProvider.RemoteWorker));
 
             var chosenSave = await ConflictSolver.ChooseCorrectData(localSave, remoteSave);
-            Debug.Log($"Solved with {chosenSave.Result}");
             if (chosenSave.IsEmpty)
             {
                 chosenSave = new InitialSaveObject();

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using API;
     using Auto;
-    using Core;
     using Core.DI;
     using Cysharp.Threading.Tasks;
     using Format;
@@ -30,9 +29,6 @@
 
         [Inject]
         public List<ISaveCameFromNewerVersionProcessor> UnknownSavesProcessors { get; set; }
-
-        [Inject]
-        public IApplication Application { get; set; }
         
         public async UniTask<SaveObject> ChooseCorrectData(SaveObject localData, SaveObject remoteData, bool tryAutoSolve = true)
         {
@@ -80,7 +76,7 @@
         
         private bool SaveCameFromNewerBuild(SaveObject saveData)
         {
-            var currentVersion = new Version(Application.Version);
+            var currentVersion = new Version(Application.version);
             if (saveData.IsEmpty)
             {
                 return false;
