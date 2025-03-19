@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using API;
-    using Core;
     using Cysharp.Threading.Tasks;
     using UnityEditor;
     using UnityEngine;
@@ -16,14 +15,9 @@
     
     public class ComboSaveWorker : ISaveIoWorker, ISaveWorkersConfigurator, ISaveIoWorkersProvider
     {
-        public ILocalSaveIoWorker LocalWorker { get; private set; }
+        public ILocalSaveIoWorker LocalWorker { get; private set; } = new LocalSaveWorker();
 
         public ISaveIoWorker RemoteWorker { get; private set; } = new StubSaveIoWorker();
-
-        public ComboSaveWorker(IApplication application)
-        {
-            LocalWorker = new LocalSaveWorker(application);
-        }
 
         public UniTask<IEnumerable<byte[]>> Read()
         {

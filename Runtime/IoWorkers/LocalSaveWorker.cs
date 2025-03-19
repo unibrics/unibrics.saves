@@ -4,23 +4,14 @@ namespace Unibrics.Saves.IoWorkers
     using System.Collections.Generic;
     using System.IO;
     using API;
-    using Core;
     using Cysharp.Threading.Tasks;
     using UnityEngine;
-    using Application = UnityEngine.Application;
 
     public class LocalSaveWorker : ILocalSaveIoWorker
     {
-        private readonly IApplication application;
-        
         private const string Prefix = "save.";
-
-        public LocalSaveWorker(IApplication application)
-        {
-            this.application = application;
-        }
-
-        private string FilenameFor(string group) => Path.Combine(application.PersistentDataPath, $"{Prefix}{group}.dat");
+        
+        private string FilenameFor(string group) => Path.Combine(Application.persistentDataPath, $"{Prefix}{group}.dat");
 
         public UniTask<IEnumerable<byte[]>> Read()
         {
@@ -29,7 +20,7 @@ namespace Unibrics.Saves.IoWorkers
 
         public IEnumerable<byte[]> ReadSync()
         {
-            foreach (var fileName in Directory.GetFiles(application.PersistentDataPath, $"{Prefix}*.dat"))
+            foreach (var fileName in Directory.GetFiles(Application.persistentDataPath, $"{Prefix}*.dat"))
             {
                 Debug.Log(fileName);
                 yield return File.ReadAllBytes(fileName);
