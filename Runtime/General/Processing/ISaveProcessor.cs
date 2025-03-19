@@ -82,7 +82,11 @@ namespace Unibrics.Saves
         
         private void TryRestore(ISaveObject saveObject, DateTime lastSaveTime)
         {
-            Parallel.ForEach(saveables, persistent =>
+            // Parallel.ForEach(saveables, persistent =>
+            // {
+            //     
+            // });
+            foreach (var persistent in saveables)
             {
                 var result = Injector.TryInjectSaves(saveObject.Result.Components, persistent, lastSaveTime);
                 if (result == SaveInjectionResult.Fail)
@@ -94,10 +98,6 @@ namespace Unibrics.Saves
                 {
                     initialSaveables.Add(persistent);
                 }
-            });
-            foreach (var persistent in saveables)
-            {
-                
             }
         }
 
