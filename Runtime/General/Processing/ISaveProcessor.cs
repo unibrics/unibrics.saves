@@ -133,12 +133,15 @@ namespace Unibrics.Saves
             }
         }
 
-        public void InitializeComponentsWithoutSaves()
+        public void InitializeComponentsWithoutSaves<T>() where T : ISaveablesGroup
         {
             var orderedProcessors = Processors.OrderByDescending(processor => processor.Priority).ToList();
             foreach (var initialSaveable in initialSaveables)
             {
-                initialSaveable.PrepareInitial(orderedProcessors);
+                if (initialSaveable is ISaveableWithinGroup<T>)
+                {
+                    initialSaveable.PrepareInitial(orderedProcessors);    
+                }
             }
         }
     }
